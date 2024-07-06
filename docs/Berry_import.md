@@ -2,7 +2,7 @@
 
 <script src="../extra_javascript/python2berry.js"></script>
 
-<textarea name="python_src" id="python_src" rows="20" cols="50">Source
+<textarea name="python_src" id="python_src" rows="20" cols="80">Source
 </textarea>
 
 <br>
@@ -10,9 +10,8 @@
 <br>
 
 
-<textarea name="berry_src" id="berry_src" rows="20" cols="50">
+<textarea name="berry_src" id="berry_src" rows="20" cols="80">
 </textarea>
-
 
 
 ### `img` class

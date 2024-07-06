@@ -18,7 +18,9 @@ class Transpiler {
       const _l = line.split(":");
       _l.push("end");
       refactored = _l.join(" ");
-    };
+    } else{
+      refactored = line.split(":")[0]; // to do - make it more robust
+    }
     refactored = refactored.replace("None","nil");
     refactored = refactored.replace("float","real");
     refactored = refactored.replace("True","true");
@@ -28,6 +30,11 @@ class Transpiler {
     refactored = refactored.replace(" not "," !");
     refactored = refactored.replace("@staticmethod","static");
     refactored = refactored.replace("__init__","init");
+    var regExp = /^class\s([^)]+)\(([^)]+)\)/;
+    var matches = regExp.exec(line);
+    if(matches.length == 3){
+      refactored = "class " + matches[1] + " : " + matches[2];
+    }
     return refactored;
   }
 
@@ -58,8 +65,10 @@ class Transpiler {
     if(l.startsWith("if")){
       var i = l.split(":");
       if(i.length > 1){
-        console.log("Oneliner:",i);
-        result = true;
+        if(i[1].trim().startsWith("#") == false){
+          console.log("Oneliner:",i);
+          result = true;
+        }
       }
     }
     return result;
@@ -79,7 +88,7 @@ class Transpiler {
     }
     if(open_brackets > 0){
       // console.log("Accumulating:",line);
-      this.output += this.refactor_line(line);
+      this.output += this.refactor_line(line, this.oneLiner(line));
       this.output += "\n";
       return false;
     }
