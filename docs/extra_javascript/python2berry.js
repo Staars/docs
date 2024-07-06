@@ -32,7 +32,7 @@ class Transpiler {
     refactored = refactored.replace("__init__","init");
     var regExp = /^class\s([^)]+)\(([^)]+)\)/;
     var matches = regExp.exec(line);
-    if(matches.length == 3){
+    if(matches && matches.length == 3){
       refactored = "class " + matches[1] + " : " + matches[2];
     }
     return refactored;
