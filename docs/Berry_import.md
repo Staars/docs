@@ -6,7 +6,7 @@
 </textarea>
 
 <br>
-<button onclick="python2berry()">Convert to Berry</button>
+<button onclick="python2berry()" class="md-button">Convert to Berry</button>
 <br>
 
 
