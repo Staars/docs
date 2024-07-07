@@ -21,6 +21,11 @@ info|`img.info() -> map` Returns a map with some infos about the current image.
   
 The optional ROI descriptor is a representation of an affine matrix, which can be constructed in Berry:
 ```berry
+#  Describe ROI using an affine matrix (https://en.wikipedia.org/wiki/Affine_transformation#Image_transformation)
+#   | scale_x shear_x translation_x |
+#   | shear_y scale_y translation_y |
+#   | 0	      0       1             | - these are constants in this scope
+  
 def roi_dsc(m)
     var d = bytes(-24)
     d.setfloat(0,m["scaleX"])
@@ -34,7 +39,6 @@ def roi_dsc(m)
     return d
 end
 ```
-  
 A simple web tool, to create such matrices is provided in here:  https://github.com/Staars/MockUp (will be reworked soon)
   
 Example:
