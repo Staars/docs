@@ -1,19 +1,3 @@
-# Berry Python Import Assistant
-
-<script src="../extra_javascript/python2berry.js"></script>
-
-<textarea name="python_src" id="python_src" rows="20" cols="80">Source
-</textarea>
-
-<br>
-<button onclick="python2berry()" class="md-button">Convert to Berry</button>
-<br>
-
-
-<textarea name="berry_src" id="berry_src" rows="20" cols="80">
-</textarea>
-
-
 ### `img` class
 
 Thin wrapper for image data, that allows format conversions and is able to reduce memory reallocations in certain scenarios.  
@@ -51,8 +35,16 @@ def roi_dsc(m)
 end
 ```
   
-A simple web tool, to create such matrices is provided in the docs.
+A simple web tool, to create such matrices is provided in here:  https://github.com/Staars/MockUp (will be reworked soon)
   
+Example:
+```berry
+# load jpg file into img
+var i = img()
+var f = open("j.jpg","r")
+i.from_jpg(f.readbytes(),img.RGB565) # i now holds image data with type RGB565
+f.close()
+```
 
 ### `cam` module
 
@@ -68,7 +60,8 @@ Example:
 
 ``` berry
 
-# set background color to blue
+# Simple "video player" for boards with a camera and a display
+
 scr = lv.scr_act()
 scr.set_style_bg_color(lv.color(lv.COLOR_BLUE), lv.PART_MAIN | lv.STATE_DEFAULT)
 
@@ -110,5 +103,22 @@ end
 
 video()
 ```
+  
+  
+# Python to Berry  
+  
+Import assistant for code snippets, not meant for auto translation of complete project.  
+  
+<script src="../extra_javascript/python2berry.js"></script>
 
+<textarea name="python_src" id="python_src" rows="20" cols="80">Source
+</textarea>
+
+<br>
+<button onclick="python2berry()" class="md-button">Convert to Berry</button>
+<br>
+
+
+<textarea name="berry_src" id="berry_src" rows="20" cols="80">
+</textarea>
 
