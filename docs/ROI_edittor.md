@@ -88,28 +88,28 @@ hide:
     <div class="box green">
         <p>Create ROI which will be the input tensor for TFL:</p>
         <p id="image-size"></p>
-        <table>
+        <div>
             <tr>
             <td>Width:</td>
-            <td><input type="form" id="roi_w" min="0" max="96" value="32" onchange="changeROIw()" class="box green"><br></td>
+            <td><input type="number" id="roi_w" min="0" max="96" value="32" onchange="changeROIw()" class="box green"><br></td>
             </tr>
             <tr>
             <td>Height:</td>
-            <td><input type="form" id="roi_h" min="0" max="96" value="32" onchange="changeROIh()" class="box green"><br></td>
+            <td><input type="number" id="roi_h" min="0" max="96" value="32" onchange="changeROIh()" class="box green"><br></td>
             </tr>
             <tr>
             <td>Rotation:</td>
-            <td><input type="form" id="roi_r" min="0" max="6.2" value="0" onchange="changeROIr()" class="box green"><br></td>
+            <td><input type="number" id="roi_r" min="0" max="6.2" value="0" onchange="changeROIr()" class="box green"><br></td>
             </tr>
             <tr>
             <td>Scale X:</td>
-            <td><input type="form" id="roi_scX" min="0" max="100" value="1" onchange="changeROIscX()" class="box green"><br></td>
+            <td><input type="number" id="roi_scX" min="0" max="100" value="1" onchange="changeROIscX()" class="box green"><br></td>
             </tr>
             <tr>
             <td>Scale Y:</td>
-            <td><input type="form" id="roi_scY" min="0" max="100" value="1" onchange="changeROIscY()" class="box green"><br></td>
+            <td><input type="number" id="roi_scY" min="0" max="100" value="1" onchange="changeROIscY()" class="box green"><br></td>
             </tr>
-        </table>
+        </div>
         <button class="md-button" id="addROI_btn" onclick="addROI()">
             Add ROI<br>
         </button>
