@@ -1,8 +1,3 @@
-
-import sys
-sys.path().push('./tasmota_env')
-sys.path().push('./tasmota')
-
 # import all Tasmota emulator stuff to be global
 import global
 import load
@@ -10,11 +5,6 @@ import gpio
 
 global.tasmota = tasmota_wasm()
 load("tasmota_env/tasmota.be")
-
-import light_state
-import Leds
-import Leds_frame
-# import animate
 #
 # Example for M5Stack Led Matrix
 # 5 x 5 WS2812
@@ -1495,7 +1485,33 @@ class Animate_oscillator : Animate_animator
   end
 end
 global.animate.oscillator = Animate_oscillator
-#!/usr/bin/env -S ../../../lib/libesp32/berry/berry -s -g
+#################################################################################
+# dyn class
+#
+# Allows to use a map with members
+# see https://github.com/berry-lang/berry/wiki/Chapter-8
+#################################################################################
+#@ solidify:dyn
+class dyn
+  var _attr
+  def init()
+      self._attr = {}
+  end
+  def setmember(name, value)
+      self._attr[name] = value
+  end
+  def member(name)
+    if self._attr.contains(name)
+        return self._attr[name]
+    else
+        import undefined
+        return undefined
+    end
+  end
+  def tostring()
+    return self._attr.tostring()
+  end
+end#!/usr/bin/env -S ../../../lib/libesp32/berry/berry -s -g
 #
 # unit tests
 
@@ -1779,13 +1795,170 @@ def load(name)
 end
 
 return load
-# Tasmota emulator - lightweitght for Leds animation
+var persist_module = module("persist")
+
+class Persist
+  static var _filename = '_persist.json'
+  var _p
+  var _dirty
+
+  def init()
+    self._p = {}
+    self._dirty = false
+    self.load()
+  end
+
+  #- virtual member getter, if a key does not exists return `nil` instead of exception -#
+  def member(key)
+    return self._p.find(key)
+  end
+
+  #- virtual member setter -#
+  def setmember(key, value)
+    self._p[key] = value
+    self._dirty = true
+  end
+
+  #- clear all entries -#
+  def zero()
+    self._p = {}
+    self._dirty = true
+  end
+  
+  #- force dirty -#
+  def dirty()
+    self._dirty = true
+  end
+
+  def remove(k)
+      self._p.remove(k)
+      self._dirty = true
+  end
+
+  def contains(k)
+      return self._p.contains(k)
+  end
+
+  def has(k)      # deprecated, use contains instead
+    return self._p.contains(k)
+  end
+
+  def find(k, d)
+      return self._p.find(k, d)
+  end
+
+  def load()
+    import json
+    import path
+    var f           # file object
+    var val         # values loaded from json
+
+    if path.exists(self._filename)
+      try
+        f = open(self._filename, "r")
+        val = json.load(f.read())
+        f.close()
+      except .. as e, m
+        if f != nil f.close() end
+        raise e, m
+      end
+      if isinstance(val, map)
+        self._p = val     # success
+      else
+        print("BRY: failed to load _persist.json")
+      end
+      self._dirty = false
+    else
+      self.save()
+    end
+
+    # print("Loading")
+  end
+
+  def save(force_save)
+    if self._dirty || force_save   # do not save if not dirty
+      var f       # file object
+      try
+        f = open(self._filename, "w")
+        self.json_fdump(f)
+        f.close()
+      except .. as e, m
+        if (f != nil) f.close() end
+        f = nil
+        try
+          f = open(self._filename, "w")
+          f.write('{}')   # fallback write empty map
+        except ..
+        end
+        if f != nil f.close() end
+        raise e, m
+      end
+      self._dirty = false
+    end
+  end
+
+  def json_fdump_any(f, v)
+    import json
+    if   isinstance(v, map)
+      self.json_fdump_map(f, v)
+    elif isinstance(v, list)
+      self.json_fdump_list(f, v)
+    else
+      f.write(json.dump(v))
+    end
+  end
+
+  def json_fdump_map(f, v)
+    import json
+    f.write('{')
+    var sep = nil
+    for k:v.keys()
+      if sep != nil  f.write(sep) end
+      
+      f.write(json.dump(str(k)))
+      f.write(':')
+      self.json_fdump_any(f, v[k])
+
+      sep = ","
+    end
+    f.write('}')
+  end
+
+  def json_fdump_list(f, v)
+    import json
+    f.write('[')
+    var i = 0
+    while i < size(v)
+      if i > 0   f.write(',') end
+      self.json_fdump_any(f, v[i])
+      i += 1
+    end
+    f.write(']')
+  end
+
+  def json_fdump(f)
+    import json
+    if isinstance(self._p, map)
+      self.json_fdump_map(f, self._p)
+    else
+      raise "internal_error", "persist._p is not a map"
+    end
+  end
+end
+persist_module.Persist = Persist
+
+persist_module.init = def (m)
+  return m.Persist()    # return an instance of this class
+end
+
+return persist_module# Tasmota emulator - lightweitght for Leds animation
 
 import global
 
 class Tasmota : tasmota_wasm
   var _millis           # emulate millis from Tasmota
   var _fl               # fast_loop
+  var _drivers
 
   def init()
     self._millis = 1
@@ -1924,6 +2097,111 @@ class Tasmota : tasmota_wasm
     return r
   end
 
+  def time_str(time_stamp)
+    import time
+    var tm = time.dump(time_stamp)
+    return format("%04d-%02d-%02dT%02d:%02d:%02d", tm['year'], tm['month'], tm['day'], tm['hour'], tm['min'], tm['sec'])
+  end
+
+  def gc()
+    import gc
+    gc.collect()
+    return gc.allocated()
+  end
+
+  def add_driver(d)
+    if type(d) != 'instance'
+      raise "value_error", "instance required"
+    end
+    if self._drivers
+      if self._drivers.find(d) == nil     # add only if not already added
+        self._drivers.push(d)
+      end
+    else
+      self._drivers = [d]
+    end
+  end
+
+  def remove_driver(d)
+    if self._drivers
+      var idx = self._drivers.find(d)
+      if idx != nil
+        self._drivers.pop(idx)
+      end
+    end
+  end
+
+  # run every 50ms tick
+  def run_deferred()
+    if self._timers
+      var i=0
+      while i < self._timers.size()
+        var trigger = self._timers[i]
+
+        if self.time_reached(trigger.trig)
+          var f = trigger.f
+          self._timers.remove(i)      # one shot event
+          f()
+        else
+          i += 1
+        end
+      end
+    end
+  end
+  
+
+  def event(event_type, cmd, idx, payload, raw)
+    import introspect
+    if event_type=='every_50ms'
+      self.run_deferred()
+    end  #- first run deferred events -#
+
+    if event_type=='every_250ms'
+      self.run_cron()
+    end
+
+    var done = false
+    var keep_going = false    # if true, we continue dispatch event if done == true (for mqtt_data)
+
+    if event_type == 'mqtt_data'
+      keep_going = true
+    end
+
+    if event_type=='cmd' return self.exec_cmd(cmd, idx, payload)
+    elif event_type=='tele' return self.exec_tele(payload)
+    elif event_type=='rule' return self.exec_rules(payload, bool(idx))
+    elif event_type=='gc' return self.gc()
+    elif self._drivers
+      var i = 0
+      while i < size(self._drivers)
+        var d = self._drivers[i]
+        var f = introspect.get(d, event_type)   # try to match a function or method with the same name
+        if type(f) == 'function'
+          try
+            done = f(d, cmd, idx, payload, raw) || done
+            if done && !keep_going   break end
+          except .. as e,m
+            print(format("BRY: Exception> '%s' - %s", e, m))
+            if self._debug_present
+              import debug
+              debug.traceback()
+            end
+          end
+        end
+        i += 1
+      end
+    end
+
+    # save persist
+    if event_type=='save_before_restart'
+      import persist
+      persist.save()
+    end
+
+    return done
+  end
+
+
 end
 
 import light_state
@@ -1932,3 +2210,17 @@ import Leds_frame
 
 global.tasmota = Tasmota()
 return tasmota
+#@ solidify:uuid
+uuid = module("uuid")
+uuid.uuid4 = def ()
+  import math
+  return format("%08x-%04x-%04x-%04x-%04x%08x",
+                       math.rand(),
+                       math.rand() & 0xFFFF,
+                       math.rand() & 0x0FFF | 0x4000,
+                       math.rand() & 0x3FFF | 0x8000,
+                       math.rand() & 0xFFFF,
+                       math.rand() )
+end
+
+return uuid
