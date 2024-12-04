@@ -76,21 +76,6 @@ sequenceDiagram
     ULP/LP->>CPU: optional - Wake up CPU
     CPU->>RTC_MEM: Work with data in RAM
 ```
-
-```mermaid
-sequenceDiagram
-    participant Berry
-    participant Context
-    participant Bluetooth-Task
-    Berry->>Berry: create bytes buffer for data exchange
-    Berry->>Berry: create callback function
-    Berry->>Context: bind buffer and callback to context
-    Berry->>Context: set properties with methods of BLE module
-    Berry->>Context: launch a command with op code
-    Context->>Bluetooth-Task: act on the BLE stack asynchronously
-    Bluetooth-Task->>Context: finish requested job, update context
-    Context->>Berry: callback function
-```
   
 ### Tasmota conventions
   
