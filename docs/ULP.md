@@ -118,7 +118,7 @@ Use the embedded JS application right here.
 # Generate ULP code in your browser !! Parsing completely in JS, no file upload to a server.
 ```
   
-Thus the ULP projects that may fail to assemble in Micropython can be used too. Additionally it can be helpful, to test the ULP code in a minimal working example outside of Tasmota.
+Additionally it can be helpful, to test the ULP code in a minimal working example outside of Tasmota.
   
 ### Micropython and micropython-esp32-ulp (FSM only) - DEPRECATED!!
 
