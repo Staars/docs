@@ -20,7 +20,7 @@ The purpose of this document is not to repeat every information of these documen
 [https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ulp_instruction_set.html](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ulp_instruction_set.html)  
   
 It will also not make it easy to write assembler code for the ULP and embed it in Berry projects. But it shall guide you through the process of adapting one of many open source examples, do some little changes and setting up a toolchain for personal use cases.  
-But it can even make it easier and substantially faster to rapidly develop assembler projects, because there is no flashing involved in the code deployment, which happens in Berry at runtime.
+In return, it can even make it easier and substantially faster to rapidly develop assembler projects, because there is no flashing involved in the code deployment, which happens in Berry at runtime.
   
   
 ### FSM and RISCV ... what?
@@ -105,7 +105,7 @@ This is the recommended way, that works for every ULP version in Tasmota.
 Many projects are using the ESP-IDF with CMAKE and will be compiled with `idf.py build`. We can extract the ULP code without flashing this project, with two simple methods: 
 
 #### Python script 'binS2Berry.py'
-Start a helper Python [binS2Berry.py](https://github.com/Staars/berry-examples/blob/main/ulp_helper/binS2Berry.py) script in the root level of the project, which prints the same information to console as the Micropython way.  
+Start a helper Python [binS2Berry.py](https://github.com/Staars/berry-examples/blob/main/ulp_helper/binS2Berry.py) script in the root level of the project, which prints hooks to used variables and functions to console as Berry code, that can be used as a base application.  
   
 #### Web-App:  
 Use the embedded JS application right here.  
