@@ -61,20 +61,20 @@ There is a memory region which is located at fixed  address 0x5000000, which is 
 ### General program flow
   
 A typical ULP program is started from the main core at the position of the so called *global entry point*. Then it executes its chain of commands and ends with a `halt` command. It is technically possible to create a run loop inside the code and to not end with `halt`. But typically such a loop is realized with a wakeup timer, that restarts the  with a certain interval, which can be set with `ULP.wake_period(register,time in microseconds)`. The register is numbered from 0 to 4 and can be changed in the assembly code with `sleep register`.  
-
+```mermaid
 sequenceDiagram
     participant CPU
     participant RTC_MEM
     participant ULP/LP
     CPU->>RTC_MEM: Load ULP program
     CPU->>ULP/LP: Start ULP program
-    Note right of CPU: Continue normal work
-    Note right of CPU: or deep sleep
+    CPU->>CPU: Continue normal work
+    CPU->>CPU: or deep sleep
     ULP/LP->>ULP/LP: Do some work
     ULP/LP->>RTC_MEM: Update data in RAM
-    ULP/LP-->CPU: optional - Wake up CPU
+    ULP/LP->>CPU: optional - Wake up CPU
     CPU->>RTC_MEM: Work with data in RAM
-    
+```
   
 ### Tasmota conventions
   
@@ -121,7 +121,7 @@ Thus the ULP projects that may fail to assemble in Micropython can be used too. 
   
 ### Micropython and micropython-esp32-ulp (FSM only) - DEPRECATED!!
 
-!!!  DO NOT USE FOR NEW PROJECTS!
+!!! DO NOT USE FOR NEW PROJECTS!
 
 Only available for the ESP32 using the FSM type ULP.
   
