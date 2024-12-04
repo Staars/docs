@@ -2,7 +2,7 @@
   
 ## Ultra Low Power coprocessor
 
-Many members of the ESP32 family feature and additional coprocessor with limited features and processing power but at the same time the ability to work independent from the main CPU and in deep sleep mode. This Berry module exposes these processing units in order to load and execute code at runtime thus allowing to provide solutions for special use cases and using every bit of available processing power.
+Many members of the ESP32 family have an additional coprocessor with limited features and processing power but at the same time the ability to work independent from the main CPU and in deep sleep mode. This Berry module exposes these processing units in order to load and execute code at runtime thus allowing to provide solutions for special use cases and using every bit of available processing power.
 
 ??? failure "This feature is not included in precompiled binaries"  
     When [compiling your build](Compile-your-build) add the following to `user_config_override.h`:
