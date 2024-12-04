@@ -75,7 +75,7 @@ sequenceDiagram
     ULP/LP->>RTC_MEM: Update data in RAM
     ULP/LP->>CPU: optional - Wake up CPU
     CPU->>RTC_MEM: Work with data in RAM
-```
+```  
   
 ### Tasmota conventions
   
@@ -122,8 +122,10 @@ Thus the ULP projects that may fail to assemble in Micropython can be used too. 
   
 ### Micropython and micropython-esp32-ulp (FSM only) - DEPRECATED!!
 
-!!!
-DO NOT USE FOR NEW PROJECTS!
+!!!  
+DO NOT USE FOR NEW PROJECTS!  
+
+??? failure "This feature is not included in precompiled binaries"  
 
 Only available for the ESP32 using the FSM type ULP.
   
