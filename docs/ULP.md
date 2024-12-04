@@ -75,7 +75,22 @@ sequenceDiagram
     ULP/LP->>RTC_MEM: Update data in RAM
     ULP/LP->>CPU: optional - Wake up CPU
     CPU->>RTC_MEM: Work with data in RAM
-```  
+```
+
+```mermaid
+sequenceDiagram
+    participant Berry
+    participant Context
+    participant Bluetooth-Task
+    Berry->>Berry: create bytes buffer for data exchange
+    Berry->>Berry: create callback function
+    Berry->>Context: bind buffer and callback to context
+    Berry->>Context: set properties with methods of BLE module
+    Berry->>Context: launch a command with op code
+    Context->>Bluetooth-Task: act on the BLE stack asynchronously
+    Bluetooth-Task->>Context: finish requested job, update context
+    Context->>Berry: callback function
+```
   
 ### Tasmota conventions
   
@@ -122,10 +137,7 @@ Thus the ULP projects that may fail to assemble in Micropython can be used too. 
   
 ### Micropython and micropython-esp32-ulp (FSM only) - DEPRECATED!!
 
-!!!  
-DO NOT USE FOR NEW PROJECTS!  
-
-??? failure "This feature is not included in precompiled binaries"  
+!!! failure "DO NOT USE FOR NEW PROJECTS!"  
 
 Only available for the ESP32 using the FSM type ULP.
   
