@@ -25,7 +25,7 @@ Use or change one of the existing example sections with naming scheme `tasmota32
     extends                 = env:tasmota32_base
     build_flags             = ${env:tasmota32_base.build_flags}
                               -DUSE_MI_ESP32
-                              -DUSE_MI_EXT_GUI
+                              -DUSE_MI_EXT_GUI=1
                               -DCONFIG_BT_NIMBLE_NVS_PERSIST=y
     lib_extra_dirs          = lib/libesp32, lib/libesp32_div, lib/lib_basic, lib/lib_i2c, lib/lib_div, lib/lib_ssl
     ```
@@ -42,7 +42,7 @@ If you want to try out Bluetooth version 5.x, which consumes a bit more memory a
     lib_ignore              = Micro-RTSP
     build_flags             = ${env:tasmota32_base.build_flags}
                               -DFIRMWARE_BLUETOOTH
-                              -DUSE_MI_EXT_GUI
+                              -DUSE_MI_EXT_GUI=1
                               -DCONFIG_BT_NIMBLE_EXT_ADV
                               -DCONFIG_BT_NIMBLE_MAX_EXT_ADV_INSTANCES=1
                               -DOTA_URL='"http://ota.tasmota.com/tasmota32/release/tasmota32c3.bin"'
@@ -218,7 +218,7 @@ For the latter it is necessary to retrieve the Identiy Resolving Key (= IRK), wh
         def init()
             import cb
             var cbp = cb.gen_cb(/e,o,u,h->self.cb(e,o,u,h))
-            BLE.serv_cb(cbp,cbuf)
+            BLE.conn_cb(cbp,cbuf)
             self.current_func = /->self.add_bpm()
             log("BLE: start hearrate server",1)
         end
@@ -503,16 +503,17 @@ For generic BLE access we import the module:
 
 BLE Function|Parameters and details
 :---|:---
+info|`()`<br>Returns a map with local BLE adapter information and active connection details when connected.
 adv_cb|`(callback function:function, buffer:bytes)`<br>Will start listening to advertisements or stop it by providing `nil` as function.<br>The callback function will have arguments `service data` and `manufacturer data` as integer values, that are indices pointing to these kinds of data in the buffer or have a value of 0 if there is no such data in the advertisement.
 adv_watch|`(MAC:bytes[, type:int])`<br>Watch BLE address exclusively, is added to a list (MAC is a 6-byte-buffer, type is optional 0-3, default is 0).
-adv_block|`(MAC:bytes[, type:int])`<br>Block BLE address, is added to a list (MAC is a 6-byte-buffer, type is optional 0-3, default is 0).
-conn_cb|`(callback function:function, buffer:bytes)`<br>Will init Tasmota as a peripheral device, that can connect to a central device.<br>The callback function will have arguments `error`,`op code`,`16-bit uuid` and `handle`. If an UUID with more than 16 bit is accessed, the automatic conversion to 16-bit will probably give no usable result, thus the handle should be used in these cases.
-serv_cb|`(callback function:function, buffer:bytes)`<br>Will init Tasmota as a central device (aka server) or stop it by providing `nil` as function.<br>The callback function will have arguments `error`,`op code`,`16-bit uuid` and `handle`. If an UUID with more than 16 bit is accessed, the automatic conversion to 16-bit will probably give no usable result, thus the handle should be used in these cases.
-set_MAC|`(MAC:bytes[, type:int]) -> handled:bool`<br>Set MAC for for use as peripheral or central device as a 6-byte-buffer, type is optional 0-3, default is 0.
+conn_cb|`(callback function:function, buffer:bytes)`<br>Registers the unified BLE callback for connection and GATT events.<br>The callback function will have arguments `error`,`op code`,`16-bit uuid` and `handle`. If an UUID with more than 16 bit is accessed, the automatic conversion to 16-bit will probably give no usable result, thus the handle should be used in these cases.
+serv_cb|`(callback function:function, buffer:bytes)`<br>DEPRECATED!! Compatibility alias for `conn_cb`.
+set_MAC|`(MAC:bytes[, type:int[, pin:int]])`<br>Set MAC for use as peripheral or central device as a 6-byte-buffer, type is optional 0-3, default is 0, and `pin` is optional.
 set_svc|`(UUID:string[, discoverAttributes:bool]) -> handled:bool`<br>Set service UUID for for use as peripheral or central device as a 16-Bit or 128-Bit service uuid, the latter must include the dashes. Optional: Let the BLE stack discover all attributes of the service, which takes time and battery. Default is `false`.
 set_chr|`(UUID:string) -> handled:bool`<br>Set characteristic UUID for for use as peripheral or central device as a 16-Bit or 128-Bit service uuid, the latter must include the dashes.
-run|`(operation:int[, response:bool, optional_arg: int])`<br>Start a Bluetooth operation, where `operation` is a proprietary code - see sections below. `Response` is optional and defaults to `false`. `optional_arg` depends on used operation, no default.
+run|`(operation:int[, response:bool[, arg1:int]])`<br>Start a Bluetooth operation, where `operation` is a proprietary code - see sections below. `response` is optional and defaults to `false`. `arg1` depends on used operation.
 loop|`()`<br>Triggers a synchronization between Bluetooth stack and Berry, thus firing callbacks, if there is new data. Will typically be called from Berrys [Fast Loop](Berry.md#fast-loop).
+store|`(blob:bytes)`<br>Restore a previously saved bond blob.
 
 
 To simplify BLE access this works in the form of state machine, where you have to set some properties of a context and then finally launch an operation. Besides we have three callback mechanisms for listening to advertisements, active sensor connections with Tasmota as a client and providing a server including advertising. All you need is a byte buffer in Berry for data exchange and a Berry function as the callback.
@@ -697,10 +698,10 @@ n bytes - data
 
 #### Central role (aka server)
 
-The server is initiated similarly with `BLE.serv_cb(cbp,cbuf)`.
+The server is initiated with `BLE.conn_cb(cbp,cbuf)`.
 After that you have to construct the server by first adding all *characteristics* and finally starting it, by setting the *advertisement* data for the first time.
 Setting *advertisement* data without adding *characteristics* will not start a BLE server but only a BLE Broadcaster, which is totally fine for some use cases (i.e. Beacons, BTHome).
-The BLE server can be stopped with `BLE.serv_cb(nil)`, which will restart the "BLE Scan Task".
+The BLE server can be stopped with `BLE.conn_cb(nil, nil)`.
 
 The callback functions returns error, operation, 16-bit-uuid and 16-bit-handle.
 
@@ -885,8 +886,7 @@ Here is an implementation of the "old" MI32 commands:
         def init()
             import cb
             var cbp = cb.gen_cb(/e,o,u,h->self.cb(e,o,u,h))
-            BLE.serv_cb(cbp,cbuf)
-            # BLE.set_svc(self.imp_svc)
+            BLE.conn_cb(cbp,cbuf)
             self.current_func = /->self.add_TX()
             log("BLE: ready for Nordic UART via BLE")
             self.pin_ready = false
