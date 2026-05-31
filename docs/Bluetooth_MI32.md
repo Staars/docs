@@ -545,6 +545,7 @@ To listen to advertisements inside a class (that could be a driver) we could ini
         var buf # transfer buffer, gets filled by the Bluetooth driver, can be read in Berry
         def init()
             import BLE
+            import cb
             self.buf = bytes(-64) # will be used in the form length-data, so self.buf[0] = length of actual data
             var callback_pointer = cb.gen_cb(/svc,manu->self.cb(svc,manu))
             BLE.adv_cb(callback_pointer,self.buf)
@@ -606,20 +607,27 @@ The payload is always provided completely, so every possibles AD type can be par
 
     The watchlist is more effective to avoid missing packets than the blocklist in environments with high BLE traffic. Both methods work for the internal Xiaomi driver and the post processing with Berry, because they set properties of the underlying Bluetooth framework.
 
-#### Peripheral role (aka client)
+#### Connected devices
 
-Communicating via connections is a bit more complex. We have to start with a callback function and a byte buffer again.
+Communicating via connections is a bit more complex. We have to start with a callback function and a byte buffer again.  
 ```berry
 # simple example for the Berry console
 import BLE
+import cb
 cbuf = bytes(-64)
 
 def cb(error,op,uuid,handle)
 end
 
-cbp = tasmota.gen_cb(/e,o,u,h->cb)
+cbp = cb.gen_cb(/e,o,u,h->cb(e,o,u,h))
 BLE.conn_cb(cbp,cbuf)
 ```
+The callback functions returns error, operation, 16-bit-uuid and 16-bit-handle.  
+The connection task can be stopped with `BLE.conn_cb(nil, nil)`.
+  
+The role of the BLE device is then defined by the use of BLE op code, which makes the ESP32 become a client, a server or both. Some complex setups are possible like Apple Notification Center Service (ANCS).  
+  
+#### Peripheral role (aka client)
 
 ```mermaid
 ---
@@ -698,25 +706,9 @@ n bytes - data
 
 #### Central role (aka server)
 
-The server is initiated with `BLE.conn_cb(cbp,cbuf)`.
+The server is initiated with `BLE.conn_cb(cbp,cbuf)` too.  
 After that you have to construct the server by first adding all *characteristics* and finally starting it, by setting the *advertisement* data for the first time.
 Setting *advertisement* data without adding *characteristics* will not start a BLE server but only a BLE Broadcaster, which is totally fine for some use cases (i.e. Beacons, BTHome).
-The BLE server can be stopped with `BLE.conn_cb(nil, nil)`.
-
-The callback functions returns error, operation, 16-bit-uuid and 16-bit-handle.
-
-```berry
-# simple server setup example for the Berry console
-import BLE
-cbuf = bytes(-256)
-
-def cb(error,op,uuid,handle)
-end
-
-cbp = tasmota.gen_cb(cb)
-BLE.serv_cb(cbp,cbuf)
-# now add characteristics and advertisement ...
-```
 
 ####Command op codes:
 
@@ -738,8 +730,8 @@ The function call will always trigger a *callback*. As every *characteristic* be
 - 226 - on subscribe to notifications and indications, returns no buffer data
 - 227 - on connect, returns MAC of client device as byte buffer
 - 228 - on disconnect, returns no buffer data
-- 229 - on status, returns error code as byte buffer
-- 230 - on authentication, returns raw security record as byte buffer
+- 229 - on status, returns error code as byte buffer, signals readiness of BLE stack for next op
+- 230 - on authentication, returns bond blob as byte buffer, which should be saved to flash
 
 !!! tip
 
@@ -762,6 +754,7 @@ Here is an implementation of the "old" MI32 commands:
     ```berry
     import BLE
     import MI32
+    import cb
 
     j = 0
     sl = 0
@@ -786,7 +779,7 @@ Here is an implementation of the "old" MI32 commands:
         end
     end
 
-    cbp = tasmota.gen_cb(cb)
+    cbp = cb.gen_cb(cb)
     BLE.conn_cb(cbp,cbuf)
 
     def SetMACfromSlot(slot)
@@ -1021,10 +1014,11 @@ Here is an implementation of the "old" MI32 commands:
 
         def init(MAC)
             import BLE
+            import cb
             self.buf = bytes(-21) # create a byte buffer, first byte reserved for length info
             self.buf[0] = 20 # length of the data part of the buffer in bytes
             self.buf[1] = 0x33 # a magic number - control byte for the Govee lamp
-            var cbp = tasmota.gen_cb(/e,o,u->self.cb(e,o,u)) # create a callback function pointer
+            var cbp = cb.gen_cb(/e,o,u->self.cb(e,o,u)) # create a callback function pointer
             BLE.conn_cb(cbp,self.buf)
             BLE.set_MAC(bytes(MAC),1) # addrType: 1 (random)
         end
@@ -1148,7 +1142,8 @@ Here is an implementation of the "old" MI32 commands:
         var x,y
 
         def init(MAC,addr_type)
-            var cbp = tasmota.gen_cb(/e,o,u,h->self.cb(e,o,u,h))
+            import cb
+            var cbp = cb.gen_cb(/e,o,u,h->self.cb(e,o,u,h))
             self.buf = bytes(-256)
             BLE.conn_cb(cbp,self.buf)
             BLE.set_MAC(bytes(MAC),addr_type)
