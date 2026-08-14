@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en" class="">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=no"
+        />
+        <link
+            rel="icon"
+            href="data:image/x-icon;base64,AAABAAEAEBACAAEAAQCwAAAAFgAAACgAAAAQAAAAIAAAAAEAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP5/b+H6X2/h8k9v4eZnb+Hud2/h7ndv4e53b+FmZm/hMkxv4ZgZb+HOc2/h5+dv4fPPb+H5n2/h/D9v4f5/b+EAAO4EAADuBAAA7gQAAO4EAADuBAAA7gQAAO4EAADuBAAA7gQAAO4EAADuBAAA7gQAAO4EAADuBAAA7gQAAO4E"
+        />
+        <title>Tasmota Berry Console</title>
+        <script>
+            var berryRuntimeReady = false;
+            var Module = {
+                onRuntimeInitialized: function() {
+                    berryRuntimeReady = true;
+                    window.dispatchEvent(new Event("berry-runtime-ready"));
+                }
+            };
+        </script>
+        <script async src="berry.js"></script>
+        <script>
+            var x = null,
+                lt,
+                to,
+                tp,
+                pc = "",
+                ws2812ledbuffer = "",
+                led_canvas,
+                led_strip = {"w":0,"h":0},
+                led_canvas_ctx,
+                led_config = {
+                    enabled: true,
+                    pixel_size: 23,
+                    serpentine: true
+                },
+                lvgl_config = {
+                    enabled: true,
+                    resolution: "320x240",
+                    custom_w: 320,
+                    custom_h: 240,
+                    bpp: "16",
+                    rotation: "0"
+                },
+                lvgl_canvas,
+                lvgl_canvas_ctx;
+
+            function loadLedConfig() {
+                try {
+                    var saved = localStorage.getItem("led_config");
+                    if (saved) {
+                        var parsed = JSON.parse(saved);
+                        if (parsed.enabled !== undefined) led_config.enabled = parsed.enabled;
+                        if (parsed.pixel_size) led_config.pixel_size = parsed.pixel_size;
+                        if (parsed.serpentine !== undefined) led_config.serpentine = parsed.serpentine;
+                    }
+                } catch(e) {}
+            }
+
+            function saveLedConfig() {
+                try {
+                    localStorage.setItem("led_config", JSON.stringify(led_config));
+                } catch(e) {}
+            }
+
+            function loadLvglConfig() {
+                try {
+                    var saved = localStorage.getItem("lvgl_config");
+                    if (saved) {
+                        var parsed = JSON.parse(saved);
+                        if (parsed.enabled !== undefined) lvgl_config.enabled = parsed.enabled;
+                        if (parsed.resolution) lvgl_config.resolution = parsed.resolution;
+                        if (parsed.custom_w) lvgl_config.custom_w = parsed.custom_w;
+                        if (parsed.custom_h) lvgl_config.custom_h = parsed.custom_h;
+                        if (parsed.bpp) lvgl_config.bpp = parsed.bpp;
+                        if (parsed.rotation) lvgl_config.rotation = parsed.rotation;
+                    }
+                } catch(e) {}
+            }
+
+            function saveLvglConfig() {
+                try {
+                    localStorage.setItem("lvgl_config", JSON.stringify(lvgl_config));
+                } catch(e) {}
+            }
+
+            function getLvglDisplaySize() {
+                if (lvgl_config.resolution === "custom") {
+                    return { w: lvgl_config.custom_w, h: lvgl_config.custom_h };
+                }
+                var parts = lvgl_config.resolution.split("x");
+                return { w: parseInt(parts[0]), h: parseInt(parts[1]) };
+            }
+
+            function drawLvglPlaceholder() {
+                if (!lvgl_canvas_ctx) return;
+                var size = getLvglDisplaySize();
+                lvgl_canvas.width = size.w;
+                lvgl_canvas.height = size.h;
+                if (lvgl_config.bpp === "1") {
+                    lvgl_canvas_ctx.fillStyle = "#000";
+                    lvgl_canvas_ctx.fillRect(0, 0, size.w, size.h);
+                    lvgl_canvas_ctx.strokeStyle = "#333";
+                    for (var x = 0; x < size.w; x += 16) {
+                        lvgl_canvas_ctx.beginPath();
+                        lvgl_canvas_ctx.moveTo(x, 0);
+                        lvgl_canvas_ctx.lineTo(x, size.h);
+                        lvgl_canvas_ctx.stroke();
+                    }
+                    for (var y = 0; y < size.h; y += 16) {
+                        lvgl_canvas_ctx.beginPath();
+                        lvgl_canvas_ctx.moveTo(0, y);
+                        lvgl_canvas_ctx.lineTo(size.w, y);
+                        lvgl_canvas_ctx.stroke();
+                    }
+                    lvgl_canvas_ctx.fillStyle = "#fff";
+                    lvgl_canvas_ctx.font = "12px monospace";
+                    lvgl_canvas_ctx.textAlign = "center";
+                    lvgl_canvas_ctx.fillText("LVGL display " + size.w + "x" + size.h, size.w / 2, size.h / 2);
+                } else {
+                    lvgl_canvas_ctx.fillStyle = "#111";
+                    lvgl_canvas_ctx.fillRect(0, 0, size.w, size.h);
+                    lvgl_canvas_ctx.strokeStyle = "#333";
+                    for (var x = 0; x < size.w; x += 20) {
+                        lvgl_canvas_ctx.beginPath();
+                        lvgl_canvas_ctx.moveTo(x, 0);
+                        lvgl_canvas_ctx.lineTo(x, size.h);
+                        lvgl_canvas_ctx.stroke();
+                    }
+                    for (var y = 0; y < size.h; y += 20) {
+                        lvgl_canvas_ctx.beginPath();
+                        lvgl_canvas_ctx.moveTo(0, y);
+                        lvgl_canvas_ctx.lineTo(size.w, y);
+                        lvgl_canvas_ctx.stroke();
+                    }
+                    lvgl_canvas_ctx.fillStyle = "#444";
+                    lvgl_canvas_ctx.font = "14px monospace";
+                    lvgl_canvas_ctx.textAlign = "center";
+                    lvgl_canvas_ctx.fillText("LVGL display " + size.w + "x" + size.h, size.w / 2, size.h / 2);
+                }
+            }
+
+            function updateSeparators() {
+                var bothVisible = led_config.enabled && lvgl_config.enabled;
+                var ledCanvas = eb("canvas");
+                var lvSection = eb("lvgl_section");
+                ledCanvas.style.borderTop = bothVisible ? "1px solid #555" : "none";
+                ledCanvas.style.marginTop = bothVisible ? "8px" : "0";
+                lvSection.style.borderTop = bothVisible ? "1px solid #555" : "none";
+                lvSection.style.paddingTop = bothVisible ? "8px" : "0";
+            }
+
+            function isPerfectSquare(n) {
+                if (n < 1) return false;
+                var r = Math.round(Math.sqrt(n));
+                return r * r === n;
+            }
+
+            function buildLayoutPresets(n) {
+                var presets = [];
+                var seen = {};
+
+                function add(cols, rows, label) {
+                    var key = cols + "x" + rows;
+                    if (!seen[key]) {
+                        seen[key] = true;
+                        presets.push({ cols: cols, rows: rows, label: cols + "x" + rows + " (" + label + ")" });
+                    }
+                }
+
+                // 8 rows packing
+                if (n % 8 === 0) add(n / 8, 8, "8 rows");
+
+                // 1:1 square
+                if (isPerfectSquare(n)) {
+                    var s = Math.round(Math.sqrt(n));
+                    add(s, s, "1:1");
+                }
+
+                // 2:1
+                if (n % 2 === 0 && isPerfectSquare(n / 2)) {
+                    var r = Math.round(Math.sqrt(n / 2));
+                    add(r * 2, r, "2:1");
+                }
+
+                // 3:1
+                if (n % 3 === 0 && isPerfectSquare(n / 3)) {
+                    var r = Math.round(Math.sqrt(n / 3));
+                    add(r * 3, r, "3:1");
+                }
+
+                // 4:1
+                if (n % 4 === 0 && isPerfectSquare(n / 4)) {
+                    var r = Math.round(Math.sqrt(n / 4));
+                    add(r * 4, r, "4:1");
+                }
+
+                return presets;
+            }
+            eb = (s) => document.getElementById(s);
+            qs = (s) => document.querySelector(s);
+            sp = (i) =>
+                (eb(i).type = eb(i).type === "text" ? "password" : "text");
+            wl = (f) => window.addEventListener("load", f);
+            var sn = 0,
+                id = 0,
+                ft,
+                ltm = 2345;
+            var hc = [],
+                cn = 0;
+            var submitting = false;
+            var submitQueue = [];
+
+            function submitBerryCode(source) {
+                if (!berryRuntimeReady || typeof Module === "undefined" || typeof Module.ccall !== "function") {
+                    submitQueue.push(source);
+                    return;
+                }
+                if (submitting) {
+                    submitQueue.push(source);
+                    return;
+                }
+                submitting = true;
+                Module.ccall("BrREPLRun", "number", ["string"], [source], { async: true })
+                    .then(function() {
+                        submitting = false;
+                        if (submitQueue.length > 0) {
+                            submitBerryCode(submitQueue.shift());
+                        }
+                    })
+                    .catch(function(e) {
+                        console.log("Berry error:", e);
+                        submitting = false;
+                    });
+            }
+
+            function l(p, fromBerry) {
+                var t = eb("t1");
+                if (p == 1) {
+                    var c = eb("c1");
+                    var cc = c.value.trim();
+                    if (cc) {
+                        hc.length > 19 && hc.pop();
+                        hc.unshift(cc);
+                        cn = 0;
+                        var t1 = document.createElement("div");
+                        t1.classList.add("br1");
+                        t1.innerText = cc;
+                        t.appendChild(t1);
+                        submitBerryCode(cc);
+                    }
+                    c.value = "";
+                    t.scrollTop = 1e8;
+                }
+                if (fromBerry) {
+                    var d = fromBerry;
+                    if (d.length > 0) {
+                        var t1 = document.createElement("div");
+                        t1.classList.add("br2");
+                        t1.innerText = d;
+                        t.appendChild(t1);
+                    }
+                    t.scrollTop = 1e8;
+                }
+                c1.focus();
+                return false;
+            }
+            wl(l);
+            var pc = 0;
+            function h() {
+                eb("c1").addEventListener("keydown", function (e) {
+                    var b = eb("c1"),
+                        c = e.keyCode;
+                    if (
+                        (38 == c || 40 == c) &&
+                        0 == this.selectionStart &&
+                        0 == this.selectionEnd
+                    ) {
+                        b.autocomplete = "off";
+                        e.preventDefault();
+                        38 == c
+                            ? (++cn > hc.length && (cn = hc.length),
+                              (b.value = hc[cn - 1] || ""))
+                            : 40 == c
+                              ? (0 > --cn && (cn = 0),
+                                (b.value = hc[cn - 1] || ""))
+                              : 0;
+                        this.selectionStart = this.selectionEnd = 0;
+                    }
+                    if (c == 13 && pc == 13) {
+                        e.preventDefault();
+                        l(1);
+                    }
+                    if (c == 9) {
+                        e.preventDefault();
+                        var start = this.selectionStart;
+                        var end = this.selectionEnd;
+                        this.value =
+                            this.value.substring(0, start) +
+                            "  " +
+                            this.value.substring(end);
+                        this.selectionStart = this.selectionEnd = start + 1;
+                    }
+                    pc = c;
+                });
+            }
+            wl(h);
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            function initLedConfig() {
+                loadLedConfig();
+
+                var ledToggle = eb("led_toggle");
+                var sliderSection = eb("slider_section");
+                var ledCanvas = eb("canvas");
+
+                ledToggle.checked = led_config.enabled;
+                sliderSection.style.display = led_config.enabled ? "" : "none";
+                ledCanvas.style.display = led_config.enabled ? "block" : "none";
+
+                ledToggle.addEventListener("change", function() {
+                    led_config.enabled = this.checked;
+                    sliderSection.style.display = this.checked ? "" : "none";
+                    ledCanvas.style.display = this.checked ? "block" : "none";
+                    updateSeparators();
+                    saveLedConfig();
+                });
+
+                var pxSlider = eb("pixel_size");
+                var pxVal = eb("pixel_size_val");
+                var mwSlider = eb("matrix_w");
+                var mwVal = eb("matrix_w_val");
+                var serpCheck = eb("led_serpentine");
+                var presetSel = eb("led_preset");
+
+                pxSlider.value = led_config.pixel_size;
+                pxVal.textContent = led_config.pixel_size;
+                mwSlider.value = led_strip.w || 32;
+                mwVal.textContent = mwSlider.value;
+                serpCheck.checked = led_config.serpentine;
+
+                pxSlider.addEventListener("input", function() {
+                    led_config.pixel_size = parseInt(this.value);
+                    pxVal.textContent = this.value;
+                    saveLedConfig();
+                });
+                mwSlider.addEventListener("input", function() {
+                    led_strip.w = parseInt(this.value);
+                    mwVal.textContent = this.value;
+                    presetSel.value = "";
+                });
+                presetSel.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        var p = JSON.parse(this.value);
+                        led_strip.w = p.cols;
+                        mwSlider.value = p.cols;
+                        mwVal.textContent = p.cols;
+                    }
+                });
+                serpCheck.addEventListener("change", function() {
+                    led_config.serpentine = this.checked;
+                    saveLedConfig();
+                });
+            }
+
+            function initLvglConfig() {
+                loadLvglConfig();
+
+                var lvToggle = eb("lvgl_toggle");
+                var lvSection = eb("lvgl_section");
+                var resSel = eb("lvgl_resolution");
+                var customWE = eb("lvgl_custom_w");
+                var customHE = eb("lvgl_custom_h");
+                var customWV = eb("lvgl_custom_w_val");
+                var customHV = eb("lvgl_custom_h_val");
+                var bppSel = eb("lvgl_bpp");
+                var rotSel = eb("lvgl_rotation");
+
+                lvToggle.checked = lvgl_config.enabled;
+                lvSection.style.display = lvgl_config.enabled ? "block" : "none";
+                resSel.value = lvgl_config.resolution;
+                customWE.value = lvgl_config.custom_w;
+                customHE.value = lvgl_config.custom_h;
+                customWV.textContent = lvgl_config.custom_w;
+                customHV.textContent = lvgl_config.custom_h;
+                bppSel.value = lvgl_config.bpp;
+                rotSel.value = lvgl_config.rotation;
+
+                var customRow = eb("lvgl_custom_row");
+                customRow.style.display = lvgl_config.resolution === "custom" ? "flex" : "none";
+
+                lvToggle.addEventListener("change", function() {
+                    lvgl_config.enabled = this.checked;
+                    lvSection.style.display = this.checked ? "block" : "none";
+                    updateSeparators();
+                    saveLvglConfig();
+                });
+                resSel.addEventListener("change", function() {
+                    lvgl_config.resolution = this.value;
+                    customRow.style.display = this.value === "custom" ? "flex" : "none";
+                    saveLvglConfig();
+                    drawLvglPlaceholder();
+                });
+                customWE.addEventListener("input", function() {
+                    lvgl_config.custom_w = parseInt(this.value);
+                    customWV.textContent = this.value;
+                    saveLvglConfig();
+                    drawLvglPlaceholder();
+                });
+                customHE.addEventListener("input", function() {
+                    lvgl_config.custom_h = parseInt(this.value);
+                    customHV.textContent = this.value;
+                    saveLvglConfig();
+                    drawLvglPlaceholder();
+                });
+                bppSel.addEventListener("change", function() {
+                    lvgl_config.bpp = this.value;
+                    saveLvglConfig();
+                    drawLvglPlaceholder();
+                });
+                rotSel.addEventListener("change", function() {
+                    lvgl_config.rotation = this.value;
+                    saveLvglConfig();
+                });
+
+                drawLvglPlaceholder();
+            }
+
+            function jd() {
+                var t = 0,
+                    i = document.querySelectorAll(
+                        "input,button,textarea,select",
+                    );
+                while (i.length >= t) {
+                    if (i[t]) {
+                        i[t]["name"] =
+                            i[t].hasAttribute("id") &&
+                            !i[t].hasAttribute("name")
+                                ? i[t]["id"]
+                                : i[t]["name"];
+                    }
+                    t++;
+                }
+                eb("t1").addEventListener("dragover", preventDefaults);
+                eb("t1").addEventListener("dragenter", preventDefaults);
+                eb("t1").addEventListener("dragleave", preventDefaults);
+                eb("t1").addEventListener("drop", upl);
+
+                led_canvas = eb("canvas");
+                led_canvas_ctx = led_canvas.getContext("2d");
+
+                lvgl_canvas = eb("lvgl_canvas");
+                lvgl_canvas_ctx = lvgl_canvas.getContext("2d");
+                drawLvglPlaceholder();
+
+                lvgl_canvas.addEventListener("mousemove", function(e) {
+                    var rect = lvgl_canvas.getBoundingClientRect();
+                    var scaleX = lvgl_canvas.width / rect.width;
+                    var scaleY = lvgl_canvas.height / rect.height;
+                    var x = Math.round((e.clientX - rect.left) * scaleX);
+                    var y = Math.round((e.clientY - rect.top) * scaleY);
+                    window.lvgl_touch_x = x;
+                    window.lvgl_touch_y = y;
+                    eb("lvgl_touch_info").textContent = "touch: x=" + x + ", y=" + y;
+                });
+                lvgl_canvas.addEventListener("mousedown", function() {
+                    window.lvgl_touch_pressed = 1;
+                });
+                lvgl_canvas.addEventListener("mouseup", function() {
+                    window.lvgl_touch_pressed = 0;
+                });
+                lvgl_canvas.addEventListener("mouseleave", function() {
+                    window.lvgl_touch_x = 0;
+                    window.lvgl_touch_y = 0;
+                    window.lvgl_touch_pressed = 0;
+                    eb("lvgl_touch_info").textContent = "touch: x=0, y=0";
+                });
+
+                initLedConfig();
+                initLvglConfig();
+                updateSeparators();
+
+                var demoAttempts = 0;
+                function tryPopulateDemos() {
+                    if (!berryRuntimeReady) {
+                        if (demoAttempts++ < 400) {
+                            setTimeout(tryPopulateDemos, 50);
+                        }
+                        return;
+                    }
+                    var fs = (typeof FS !== "undefined") ? FS : (typeof Module !== "undefined" && Module.FS);
+                    if (fs) {
+                        try {
+                            if (populateDemoSelect(fs)) return;
+                        } catch(e) {}
+                    }
+                    if (demoAttempts++ < 400) {
+                        setTimeout(tryPopulateDemos, 50);
+                    }
+                }
+                window.addEventListener("berry-runtime-ready", tryPopulateDemos);
+                tryPopulateDemos();
+
+                window.addEventListener("berry-runtime-ready", function() {
+                    if (!submitting && submitQueue.length > 0) {
+                        submitBerryCode(submitQueue.shift());
+                    }
+                });
+                if (berryRuntimeReady && submitQueue.length > 0) {
+                    submitBerryCode(submitQueue.shift());
+                }
+
+                eb("led_demo_select").addEventListener("change", function() {
+                    if (this.value) {
+                        submitBerryCode('load("' + this.value + '")');
+                        this.value = "";
+                    }
+                });
+                eb("lvgl_demo_select").addEventListener("change", function() {
+                    if (this.value) {
+                        submitBerryCode('load("' + this.value + '")');
+                        this.value = "";
+                    }
+                });
+            }
+            function sf(s) {
+                var t = 0,
+                    i = document.querySelectorAll(".hf");
+                while (i.length >= t) {
+                    if (i[t]) {
+                        i[t].style.display = s ? "block" : "none";
+                    }
+                    t++;
+                }
+            }
+            wl(jd);
+            function su(t) {
+                eb("f3").style.display = "none";
+                eb("f2").style.display = "block";
+                t.form.submit();
+            }
+            async function handleEntry(entry, path) {
+                if (entry.isFile) {
+                    entry.file((file) => {
+                        const fullPath = path + entry.name;
+                        console.log(`… file: ${fullPath}`);
+                        if (/\.tapp_?$/i.test(entry.name)) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => parseTapp(entry.name, e.target.result);
+                            reader.readAsArrayBuffer(file);
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const data = new Uint8Array(e.target.result);
+                            const dir = fullPath.substring(0, fullPath.lastIndexOf("/"));
+                            if (dir) FS.createPath("/", dir, true, true);
+                            FS.writeFile(fullPath, data);
+                        };
+                        reader.readAsArrayBuffer(file);
+                    });
+                } else if (entry.isDirectory) {
+                    const reader = entry.createReader();
+                    let entries;
+                    do {
+                        entries = await new Promise(resolve => reader.readEntries(resolve));
+                        for (const child of entries) {
+                            handleEntry(child, path + entry.name + "/");
+                        }
+                    } while (entries.length > 0);
+                }
+            }
+
+            function ensureDir(dir) {
+                var parts = dir.replace(/^\//, '').split('/');
+                var current = '';
+                for (var i = 0; i < parts.length; i++) {
+                    if (!parts[i]) continue;
+                    current += '/' + parts[i];
+                    try { FS.stat(current); } catch(e) { FS.mkdir(current); }
+                }
+            }
+
+            function parseTapp(name, data) {
+                var view = new DataView(data);
+                var eocdOffset = -1;
+                for (var i = data.byteLength - 22; i >= 0; i--) {
+                    if (view.getUint32(i, true) === 0x06054b50) { eocdOffset = i; break; }
+                }
+                if (eocdOffset < 0) { console.log("Invalid .tapp: no EOCD"); return false; }
+                var numEntries = view.getUint16(eocdOffset + 8, true);
+                var cdOffset = view.getUint32(eocdOffset + 16, true);
+                var baseName = name.replace(/\.tapp_?$/i, "");
+                var tmpDir = "/tmp_" + baseName;
+                ensureDir(tmpDir);
+                var loaded = 0;
+                var pos = cdOffset;
+                for (var e = 0; e < numEntries; e++) {
+                    if (view.getUint32(pos, true) !== 0x02014b50) { console.log("Bad central dir entry"); break; }
+                    var method = view.getUint16(pos + 10, true);
+                    var compSize = view.getUint32(pos + 20, true);
+                    var localOffset = view.getUint32(pos + 42, true);
+                    var nameLen = view.getUint16(pos + 28, true);
+                    var extraLen = view.getUint16(pos + 30, true);
+                    var commentLen = view.getUint16(pos + 32, true);
+                    var entryName = new TextDecoder().decode(data.slice(pos + 46, pos + 46 + nameLen));
+                    pos += 46 + nameLen + extraLen + commentLen;
+                    if (method !== 0) { console.log("Skipping compressed entry:", entryName); continue; }
+                    if (view.getUint32(localOffset, true) !== 0x04034b50) { console.log("Bad local header for:", entryName); continue; }
+                    var localNameLen = view.getUint16(localOffset + 26, true);
+                    var localExtraLen = view.getUint16(localOffset + 28, true);
+                    var dataOffset = localOffset + 30 + localNameLen + localExtraLen;
+                    var fileData = data.slice(dataOffset, dataOffset + (compSize || 0));
+                    if (entryName.indexOf("/") >= 0) {
+                        var subDir = tmpDir + "/" + entryName.substring(0, entryName.lastIndexOf("/"));
+                        ensureDir(subDir);
+                    }
+                    FS.writeFile(tmpDir + "/" + entryName, new Uint8Array(fileData));
+                    loaded++;
+                }
+                console.log("Extracted " + loaded + " files from " + name + " to " + tmpDir);
+                var autoexec = tmpDir + "/autoexec.be";
+                try {
+                    FS.stat(autoexec);
+                    // Keep relative path.listdir(), open(), and load() calls inside
+                    // the extracted extension. A module path alone only fixes imports.
+                    FS.chdir(tmpDir);
+                    submitBerryCode('global.tasmota.wd="' + tmpDir + '/";global.tasmota.add_module_path("' + tmpDir + '");load("' + autoexec + '")');
+                    console.log("Launched extension:", baseName);
+                } catch(e) {
+                    console.log("No autoexec.be in extension:", baseName);
+                }
+                return true;
+            }
+
+            function upl(ev) {
+                console.log("File(s) dropped");
+                ev.preventDefault();
+
+                if (ev.dataTransfer.items) {
+                    [...ev.dataTransfer.items].forEach((item) => {
+                        if (item.kind === "file") {
+                            const entry = item.webkitGetAsEntry();
+                            if (entry) handleEntry(entry, "");
+                        }
+                    });
+                } else {
+                    [...ev.dataTransfer.files].forEach((file, i) => {
+                        console.log(`… file[${i}].name = ${file.name}`);
+                        if (!file) return;
+                        if (/\.tapp_?$/i.test(file.name)) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => parseTapp(file.name, e.target.result);
+                            reader.readAsArrayBuffer(file);
+                        } else {
+                            const reader = new FileReader();
+                            reader.onload = (e) => FS.writeFile(file.name, e.target.result);
+                            reader.readAsText(file);
+                        }
+                    });
+                }
+            }
+
+            function drawLED(msg){
+                if (!led_config.enabled) return;
+                eb("slider_section").style.visibility = "unset"
+                let leds_left = msg.length/6
+
+                // populate layout presets from pixel count
+                var presetSel = eb("led_preset");
+                var presets = buildLayoutPresets(leds_left);
+                var prevVal = presetSel.value;
+                presetSel.innerHTML = '<option value="">-</option>';
+                for (var i = 0; i < presets.length; i++) {
+                    var opt = document.createElement("option");
+                    opt.value = JSON.stringify({cols: presets[i].cols, rows: presets[i].rows});
+                    opt.textContent = presets[i].label;
+                    presetSel.appendChild(opt);
+                }
+                // auto-select 8-row preset if columns not yet set
+                if (led_strip.w === 0 && presets.length > 0) {
+                    var best = presets[0];
+                    for (var i = 0; i < presets.length; i++) {
+                        if (presets[i].rows === 8) { best = presets[i]; break; }
+                    }
+                    led_strip.w = best.cols;
+                    presetSel.value = JSON.stringify({cols: best.cols, rows: best.rows});
+                    eb("matrix_w").value = best.cols;
+                } else {
+                    presetSel.value = prevVal;
+                }
+
+                // columns slider goes up to pixel count (single row)
+                eb("matrix_w").max = leds_left;
+
+                var columns = 32;
+                if(led_strip.w != 0){
+                    columns = led_strip.w;
+                }
+                var px = led_config.pixel_size;
+                var gap = 2;
+                var step = px + gap;
+                led_canvas.width = columns * step;
+                var rows = Math.ceil(msg.length/columns/6);
+                eb("matrix_w_val").textContent = columns;
+                var left2right = true;
+                rows *= 6; // 6 chars per pixel
+                led_canvas.height = rows * step / 6;
+                const width = led_canvas.width - step;
+                for(let row = 0; row < rows; row += 1){
+                    if (led_config.serpentine) {
+                        left2right = (row % 2 === 0);
+                    }
+                    for (let i = 0; i < columns; i += 1) {
+                        if(leds_left == 0){
+                            return;
+                        }
+                        led_canvas_ctx.fillStyle = `#${msg.substring((i+(row*columns)) * 6,((i+(row*columns))*6)+6)}`;
+                        if(left2right){
+                            led_canvas_ctx.fillRect((i * step) + 1 , (row * step) + 1, px, px);
+                        } else {
+                            led_canvas_ctx.fillRect((width - (i * step) ) + 1 , (row * step) + 1, px, px);
+                        }
+                        leds_left -= 1;
+                    }
+                }
+                // return;
+
+            }
+
+            function writeOutputText(text){
+                console.log("from Berry:", text);
+                if (text) {
+                    l(null, text);
+                }
+            }
+
+            function parseLedConfig(jsonString){
+                var j = JSON.parse(jsonString.replace("\\",""));
+                if("w" in j){
+                    led_strip.w = j.w;
+                }
+                if("h" in j){
+                    led_strip.h = j.h;
+                }
+            }
+
+            function writeLedBuffer(msg){
+                if(msg.charAt(0) == '{'){
+                    parseLedConfig(msg);
+                } else {
+                    drawLED(msg);
+                }
+            }
+
+            function populateDemoSelect(fs) {
+                function collectFiles(path, list) {
+                    try {
+                        fs.readdir(path).forEach(function(name) {
+                            if (name === "." || name === "..") return;
+                            var full = path + "/" + name;
+                            var stat = fs.stat(full);
+                            if (fs.isFile(stat.mode) && name.endsWith(".be")) {
+                                list.push(full);
+                            } else if (fs.isDir(stat.mode)) {
+                                collectFiles(full, list);
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                function fillSelect(selId, basePath, prefix) {
+                    var sel = eb(selId);
+                    sel.innerHTML = '<option value="">-- none --</option>';
+                    var count = 0;
+                    try {
+                        var entries = fs.readdir(basePath);
+                        var dirs = [];
+                        var rootFiles = [];
+                        entries.forEach(function(name) {
+                            if (name === "." || name === "..") return;
+                            var full = basePath + "/" + name;
+                            var stat = fs.stat(full);
+                            if (fs.isFile(stat.mode) && name.endsWith(".be")) {
+                                rootFiles.push(full);
+                            } else if (fs.isDir(stat.mode)) {
+                                dirs.push({ name: name, path: full });
+                            }
+                        });
+
+                        rootFiles.sort().forEach(function(f) {
+                            var opt = document.createElement("option");
+                            opt.value = f;
+                            opt.textContent = f.replace(prefix, "");
+                            sel.appendChild(opt);
+                            count += 1;
+                        });
+
+                        dirs.sort(function(a, b) { return a.name.localeCompare(b.name); });
+                        dirs.forEach(function(d) {
+                            var files = [];
+                            collectFiles(d.path, files);
+                            files.sort();
+                            if (files.length === 0) return;
+                            var og = document.createElement("optgroup");
+                            og.label = d.name;
+                            files.forEach(function(f) {
+                                var opt = document.createElement("option");
+                                opt.value = f;
+                                opt.textContent = f.replace(prefix + d.name + "/", "");
+                                og.appendChild(opt);
+                                count += 1;
+                            });
+                            sel.appendChild(og);
+                        });
+                    } catch(e) { console.log("fillSelect error:", e); }
+                    return count;
+                }
+
+                var ledCount = fillSelect("led_demo_select", "/demos/LED", "/demos/LED/");
+                var lvglCount = fillSelect("lvgl_demo_select", "/demos/LVGL", "/demos/LVGL/");
+                return ledCount > 0 && lvglCount > 0;
+            }
+
+        </script>
+        <style>
+            div,
+            fieldset,
+            input,
+            select {
+                padding: 5px;
+                font-size: 1em;
+            }
+
+            fieldset {
+                background: #4f4f4f;
+            }
+
+            p {
+                margin: 0.5em 0;
+            }
+
+            input {
+                width: 100%;
+                box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                background: #dddddd;
+                color: #000000;
+            }
+
+            input[type="checkbox"],
+            input[type="radio"] {
+                width: 1em;
+                margin-right: 6px;
+                vertical-align: -1px;
+            }
+
+            input[type="range"] {
+                width: 99%;
+            }
+
+            select {
+                width: 100%;
+                background: #dddddd;
+                color: #000000;
+            }
+
+            textarea {
+                resize: vertical;
+                width: 98%;
+                height: 318px;
+                padding: 5px;
+                overflow: auto;
+                background: #1f1f1f;
+                color: #65c115;
+            }
+
+            body {
+                text-align: center;
+                font-family: verdana, sans-serif;
+                background: #252525;
+            }
+
+            td {
+                padding: 0px;
+            }
+
+            button {
+                border: 0;
+                border-radius: 0.3rem;
+                background: #1fa3ec;
+                color: #faffff;
+                line-height: 2.4rem;
+                font-size: 1.2rem;
+                width: 100%;
+                -webkit-transition-duration: 0.4s;
+                transition-duration: 0.4s;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background: #0e70a4;
+            }
+
+            .bred {
+                background: #d43535;
+            }
+
+            .bred:hover {
+                background: #931f1f;
+            }
+
+            .bgrn {
+                background: #47c266;
+            }
+
+            .bgrn:hover {
+                background: #5aaf6f;
+            }
+
+            a {
+                color: #1fa3ec;
+                text-decoration: none;
+            }
+
+            .p {
+                float: left;
+                text-align: left;
+            }
+
+            .q {
+                float: right;
+                text-align: right;
+            }
+
+            .r {
+                border-radius: 0.3em;
+                padding: 2px;
+                margin: 6px 2px;
+            }
+
+            .hf {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div
+            style="
+                background: #252525;
+                text-align: left;
+                display: inline-block;
+                color: #eaeaea;
+                min-width: 340px;
+            "
+        >
+            <div style="text-align: center; color: #eaeaea">
+                <noscript>
+                    To use Tasmota, please enable JavaScript
+                    <br />
+                </noscript>
+                <h3>Berry in a Browser</h3>
+                <h2>Tasmota emulator</h2>
+            </div>
+            <div id="toolbar" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 4px 5px; border-bottom: 1px solid #555; margin-bottom: 4px;">
+                <label style="white-space:nowrap;"><input type="checkbox" id="led_toggle" checked> LED</label>
+                <select id="led_demo_select" style="width:auto; max-width:180px;">
+                    <option value="">-- none --</option>
+                </select>
+                <label style="white-space:nowrap;"><input type="checkbox" id="lvgl_toggle" checked> LVGL</label>
+                <select id="lvgl_demo_select" style="width:auto; max-width:180px;">
+                    <option value="">-- none --</option>
+                </select>
+                <span id="berry_status" style="white-space:nowrap; color: #47c266;">&#9679; running</span>
+            </div>
+            <div id="slider_section" style="visibility: collapse;">
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 4px 5px;">
+                    <label style="white-space:nowrap;">Pixel:
+                        <input type="range" id="pixel_size" min="2" max="48" value="23" style="width:80px; vertical-align:middle;">
+                        <span id="pixel_size_val">23</span>px
+                    </label>
+                    <label style="white-space:nowrap;">Preset:
+                        <select id="led_preset" style="width:auto;">
+                            <option value="">-</option>
+                        </select>
+                    </label>
+                    <label style="white-space:nowrap;">Columns:
+                        <input type="range" id="matrix_w" min="1" max="64" value="32" style="width:80px; vertical-align:middle;">
+                        <span id="matrix_w_val">32</span>
+                    </label>
+                    <label style="white-space:nowrap;"><input type="checkbox" id="led_serpentine" checked> Serpentine</label>
+                </div>
+            </div>
+            <canvas id="canvas" width="800" height="150" style="display: block; margin-left: auto; margin-right: auto;"></canvas>
+            <div id="lvgl_section" style="display: block;">
+                <div id="lvgl_controls" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 4px 5px;">
+                    <label style="white-space:nowrap;">Resolution:
+                        <select id="lvgl_resolution" style="width:auto;">
+                            <option value="128x64">128x64</option>
+                            <option value="128x128">128x128</option>
+                            <option value="135x240">135x240</option>
+                            <option value="240x240">240x240</option>
+                            <option value="240x320">240x320</option>
+                            <option value="320x240" selected>320x240</option>
+                            <option value="320x480">320x480</option>
+                            <option value="384x384">384x384</option>
+                            <option value="400x400">400x400</option>
+                            <option value="470x640">470x640</option>
+                            <option value="480x320">480x320</option>
+                            <option value="480x480">480x480</option>
+                            <option value="800x480">800x480</option>
+                            <option value="1280x720">1280x720</option>
+                            <option value="1920x1080">1920x1080</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </label>
+                    <div id="lvgl_custom_row" style="display:none; gap: 8px; align-items: center;">
+                        <label style="white-space:nowrap;">W:
+                            <input type="range" id="lvgl_custom_w" min="80" max="1920" value="320" style="width:80px; vertical-align:middle;">
+                            <span id="lvgl_custom_w_val">320</span>
+                        </label>
+                        <label style="white-space:nowrap;">H:
+                            <input type="range" id="lvgl_custom_h" min="80" max="1920" value="240" style="width:80px; vertical-align:middle;">
+                            <span id="lvgl_custom_h_val">240</span>
+                        </label>
+                    </div>
+                    <label style="white-space:nowrap;">BPP:
+                        <select id="lvgl_bpp" style="width:auto;">
+                            <option value="1">1-bit (mono)</option>
+                            <option value="16" selected>16-bit (color)</option>
+                        </select>
+                    </label>
+                    <label style="white-space:nowrap;">Rotation:
+                        <select id="lvgl_rotation" style="width:auto;">
+                            <option value="0" selected>0</option>
+                            <option value="90">90</option>
+                            <option value="180">180</option>
+                            <option value="270">270</option>
+                        </select>
+                    </label>
+                </div>
+                <canvas id="lvgl_canvas" width="320" height="240" style="display: block; max-width: 100%; height: auto; margin: 0 auto; image-rendering: pixelated; image-rendering: crisp-edges; background: #000;"></canvas>
+                <div id="lvgl_touch_info" style="text-align: center; color: #888; font-size: 0.85em; padding: 2px 0;">touch: x=0, y=0</div>
+            </div>
+            <style>
+                .br1 {
+                    border-left: dotted 2px #860;
+                    margin-bottom: 4px;
+                    margin-top: 4px;
+                    padding: 1px 5px 1px 18px;
+                }
+
+                .br2 {
+                    padding: 0px 5px 0px 5px;
+                    color: #faffff;
+                }
+
+                .br0 {
+                    font: medium -moz-fixed;
+                    font: -webkit-small-control;
+                    box-sizing: border-box;
+                    width: 100%;
+                    overflow: auto;
+                    resize: vertical;
+                    font-family: monospace;
+                    overflow: auto;
+                    font-size: 1em;
+                }
+
+                .bro {
+                    border: 1px solid gray;
+                    height: 250px;
+                    padding: 2px;
+                    background: #222;
+                    color: #fb1;
+                    white-space: pre;
+                    padding: 2px 5px 2px 5px;
+                }
+
+                .bri {
+                    border: 1px solid gray;
+                    height: 60px;
+                    padding: 5px;
+                    color: #000000;
+                    background: #faffff;
+                }
+            </style>
+            <br />
+            <div
+                contenteditable="false"
+                class="br0 bro"
+                readonly
+                id="t1"
+                cols="340"
+                wrap="off"
+            >
+                <div class="br1" style="white-space:collapse;">
+                    Welcome to the Berry Scripting console. Check the
+                    <a
+                        href="https://tasmota.github.io/docs/Berry/"
+                        target="_blank"
+                        >documentation</a
+                    >
+                    .
+                </div>
+            </div>
+            <form method="get" id="fo" onsubmit="return l(1);">
+                <textarea
+                    id="c1"
+                    class="br0 bri"
+                    rows="4"
+                    cols="340"
+                    wrap="soft"
+                    autofocus
+                    required
+                ></textarea>
+                <button type="submit">Run code (or press 'Enter' twice)</button>
+            </form>
+            <div id="but6d" style="display: block"></div>
+        </div>
+    </body>
+</html>
