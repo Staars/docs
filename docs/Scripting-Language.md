@@ -15,42 +15,40 @@
 
     | Feature | Description |
     | -- | -- |
-    USE_BUTTON_EVENT | enable `>b` section (detect button state changes)
-    USE_SCRIPT_JSON_EXPORT | enable `>J` section (publish JSON payload on [TelePeriod](Commands.md#teleperiod))
+    USE_BUTTON_EVENT | enables `>b` section (detect button state changes)
+    USE_SCRIPT_JSON_EXPORT | enables `>J` section (publish JSON payload on [TelePeriod](Commands.md#teleperiod))
     USE_SCRIPT_SUB_COMMAND | enables invoking named script subroutines via the Console or MQTT
-    USE_SCRIPT_HUE | enable `>H` section (Alexa Hue emulation)
-    USE_HOMEKIT | enable `>h` section (Siri Homekit support (ESP32 only),<br>define must be given in platform_override see below)
-    USE_SCRIPT_STATUS | enable `>U` section (receive JSON payloads from cmd status)
-    SCRIPT_POWER_SECTION | enable `>P` section (execute on power changes)
+    USE_SCRIPT_HUE | enables `>H` section (Alexa Hue emulation)
+    USE_HOMEKIT | enables `>h` section (Siri Homekit support (ESP32 only),<br>define must be given in platform_override see below)
+    USE_SCRIPT_STATUS | enables `>U` section (receive JSON payloads from cmd status)
+    SCRIPT_POWER_SECTION | enables `>P` section (execute on power changes)
     SUPPORT_MQTT_EVENT | enables support for subscribe unsubscribe
-    USE_SENDMAIL | enable `>m` section and support for sending e-mail<br>(on ESP32 you must add USE_ESP32MAIL)  
-    USE_SCRIPT_WEB_DISPLAY | enable `>W` section (modify web UI)
+    USE_SENDMAIL | enables `>m` section and support for sending e-mail<br>(on ESP32 you must add USE_ESP32MAIL)  
+    USE_SCRIPT_WEB_DISPLAY | enables `>W` section (modify web UI)
     SCRIPT_FULL_WEBPAGE | enable ``>w`` section (separate full web page and webserver)
-    USE_TOUCH_BUTTONS | enable virtual touch button support with touch displays
-    USE_WEBSEND_RESPONSE | enable receiving the response of [`WebSend`](Commands.md#websend) and [`WebQuery`](Commands.md#webquery) commands (received in section >E)
+    USE_TOUCH_BUTTONS | enables virtual touch button support with touch displays
+    USE_WEBSEND_RESPONSE | enables receiving the response of [`WebSend`](Commands.md#websend) and [`WebQuery`](Commands.md#webquery) commands (received in section >E)
     SCRIPT_STRIP_COMMENTS | enables stripping comments when attempting to paste a script that is too large to fit
     USE_ANGLE_FUNC | add sin(x),acos(x) and sqrt(x) e.g. to allow calculation of horizontal cylinder volume
     USE_SCRIPT_FATFS_EXT | enables additional FS commands   
     USE_WEBCAM | enables support ESP32 Webcam which is controlled by scripter cmds
     USE_FACE_DETECT | enables face detecting in ESP32 Webcam
     USE_SCRIPT_TASK | enables multitasking Task in ESP32
-    `USE_LVGL` | enables support for LVGL, no longer supported, use Berry script with LVGL
     USE_SCRIPT_GLOBVARS | enables global variables and >G section
     USE_SML_M | enables [Smart Meter Interface](Smart-Meter-Interface)
-    SML_REPLACE_VARS | enables possibility to replace the lines from the (SML) descriptor with Vars
+    SML_REPLACE_VARS | enables replacing hard-coded definitions for SML descriptor with variables
     NO_USE_SML_SCRIPT_CMD | disables SML script cmds
     USE_SCRIPT_I2C | enables I2C support
     USE_SCRIPT_SERIAL | enables support for serial io cmds
     USE_SCRIPT_TIMER | enables up to 4 Arduino timers (so called tickers)  
     SCRIPT_GET_HTTPS_JP | enables reading HTTPS JSON WEB Pages (e.g. Tesla Powerwall)
     LARGE_ARRAYS | enables arrays of up to 1000 entries instead of max 127  
-    SCRIPT_LARGE_VNBUFF | enables to use 4096 in stead of 256 bytes buffer for variable names  
+    SCRIPT_LARGE_VNBUFF | enables to use 4096 instead of 256 bytes buffer for variable names  
     USE_GOOGLE_CHARTS | enables definition of google charts within web section
     USE_FEXTRACT | enables array extraction from database fxt(...), fxto() and tso(), tsn(), cts(), s2t() functions  
     USE_SCRIPT_SPI | enables support for SPI interface  
     USE_SCRIPT_TCP_SERVER | enables support for TCP server  
     USE_DISPLAY_DUMP | enables to show epaper screen as BMP image in >w section  
-    TS_FLOAT | may be define as double to use double precision numbers (uses double RAM memory and is slower) 
     SCRIPT_FULL_OPTIONS | enables almost any of the above options (uses about 90k of Flash)  
 
 !!! info "Scripting Language for Tasmota is an alternative to Tasmota [Rules](Rules). For ESP32 builds it is recommended to use [Berry](Berry)"
@@ -59,9 +57,9 @@ To enter a script, go to **Consoles -> Edit Script** in the Tasmota web UI menu 
 
 To save code space almost no error messages are provided. However it is taken care of that at least it should not crash on syntax errors.  
 
-### Features
+## Features
 
-- Up to 50 variables (45 numeric and 5 strings - this may be changed by setting a compilation `#define` directive)  
+- number of variables limited by available RAM only 
 - Freely definable variable names (all variable names are intentionally _**case sensitive**_)  
 - Nested if,then,else up to a level of 8  
 - Math operators  `+`,`-`,`*`,`/`,`%`,`&`,`|`,`^`,`<<`,`>>`  
@@ -74,7 +72,7 @@ To save code space almost no error messages are provided. However it is taken ca
 - String comparison `==`, `!=`  
 - String size is 19 characters (default). This can be increased or decreased by the optional parameter on the `D` section definition
 
-#### Script Interpreter
+### Script Interpreter
 
 - Execution is _**strictly sequential**_, _**line by line**_
 - Evaluation is _**left to right**_ with optional brackets  
@@ -114,11 +112,10 @@ with all linker files
 
 #### script init error codes
 after initialization the script reports some info in the console e.g:  
-00:00:00.043 SCR: nv=15, tv=1, vns=83, vmem=895, smem=8192, gmem=588, pmem=0, tmem=9758  
+`00:00:00.043 SCR: nv=15, tv=1, vns=83, vmem=895, smem=8192, gmem=588, pmem=0, tmem=9758`
 nv = number of used variables in total (numeric and strings)  
 tv = number of used string variables  
-vns = total size of name strings in bytes (may not exceed 255) or #define SCRIPT_LARGE_VNBUFF extents the size to 4095
-
+vns = total size of name strings in bytes (may not exceed 256) or #define SCRIPT_LARGE_VNBUFF extents the size to 4095 (default)  
 vmem = used heap ram by the script (psram if available)  
 smem = used script (text) memory (psram if available)  
 gmem = used script global static memory 
@@ -126,6 +123,7 @@ pmem = used script permanent memory
 tmem = used script memory total  
 
 if the script init fails an error code is reported:    
+-1 = syntax error in section >D
 -4 = not enough memory  
 -5 = variable name length too long in total  
 -6 = too many arrays defined  
@@ -149,19 +147,24 @@ see further info and download [here](https://www.dropbox.com/sh/0us18ohui4c3k82/
 
 #### Visual Studio Code Extension
 
-If you're used to working with Visual Studio Code, you can use [this extension](https://marketplace.visualstudio.com/items?itemName=StefanoBertini.tasmota-script-support) to edit your scripts with the benefit of various helpful features, such as, for example, Syntax Highlighting, Automatic script upload, #define, ifdef and ifndef preprocessor macros, Code Folding, Code Snippet and Hover hints on tasmota functions and variables documentation.  
+If you're used to work with Visual Studio Code, you can use [this extension](https://marketplace.visualstudio.com/items?itemName=StefanoBertini.tasmota-script-support) to edit your scripts with the benefit of various helpful features, such as, for example, Syntax Highlighting, Automatic script upload, #define, ifdef and ifndef preprocessor macros, Code Folding, Code Snippet and Hover hints on tasmota functions and variables documentation.  
 
-#### Console Commands
+### Console Commands
 
-`script <n>` <n>: `0` = switch script off; `1` = switch script on  `8` = switch stop on error off; `9` = switch stop on error on 
-`script ><cmdline>` execute <cmdline>  
-- Can be used to set variables, e.g., `script >mintmp=15`  
-- Multiple statements can be specified by separating each with a semicolon, e.g. `script >mintmp=15;maxtemp=40`  
+- `script <n>` set runtime options for scripting  
+   with <n>:
+  	- `0` = switch script off
+  	- `1` = switch script on
+  	- `8` = switch stop on error off
+  	- `9` = switch stop on error on 
+- `script ><cmdline>` to execute `<cmdline>`  
+
+  - Can be used to set variables, e.g., `script >mintmp=15`  
+  - Multiple statements can be specified by separating each with a semicolon, e.g. `script >mintmp=15;maxtemp=40`  
   
-`script?<var>` queries a script variable `var`  
+  - `script?<var>` queries a script variable `var`  
 
-`scriptsize N` sets the amount of script source code allowed between 1000 and max defined during compile (with #define UFSYS_SIZE)    
-
+- `scriptsize N` sets the amount of script source code allowed between 1000 and max defined during compile (with #define UFSYS_SIZE)    
 - The script itself can't be specified because the size would not fit the MQTT buffers
 
 ## Script Sections
@@ -198,7 +201,7 @@ therefore when specifing permanent variables, add newly defined ones always at t
   array = {x y z} sets 3 values in an array from index array[0]  
 
 !!! tip
-    Keep variable names as short as possible. The length of all variable names taken together may not exceed 256 characters.  
+    Keep variable names as short as possible. The length of all variable names taken together may not exceed 4096 characters.  
     Memory is dynamically allocated as a result of the D section.  
     Copying a string to a number or reverse is supported  
 
@@ -375,16 +378,19 @@ for next loops are supported to repeat HTML code (precede with % char)
 %for var from to inc
 %next
 ```
-but this method is preferred:
-script subroutines may be called sub=name of subroutine, like normal subroutines
-`%=#sub`
-in this subroutine a web line may be sent by wcs (see below) thus allowing dynamic HTML pages
+but this method is preferred:  
+script subroutines may be called sub=name of subroutine, like normal subroutines  
+`%=#sub`  
+in this subroutine a web line may be sent by wcs (see below) thus allowing dynamic HTML pages  
 
-=#sub(x) in any position of webline calls subroutine. this allows inserting content
- 
-insa(array) in any position insert all elements from an array comma separated 
+script subfiles may be called like normal subroutines but in a file  
+`%=#(subfile.tas)`
+
+=#sub(x) in any position of webline calls subroutine. this allows inserting content  
+
+insa(array) in any position insert all elements from an array comma separated  
   
-%/file calls a file from the file system and send its content to browser. in this file any cmds may apply.
+%/file calls a file from the file system and send its content to browser. in this file any html code may apply.  
  
 A web user interface may be generated containing any of the following elements:  
     
@@ -396,22 +402,32 @@ remark: state variable names used for IO in the web interface may not contain an
  `vn` = name of variable to hold button state  
  `txt1` = text of ON state of button  
  `txt2` = text of OFF state of button  
+ if variable name vn begins with an undercore the name specifies a subroutine which is called when pressing the button  
 
 #### Pulldown
 
  `pd(vn label (xs) txt1 txt2 ... txtn)`  
  `vn` = name of variable to hold selected state  
  `label` = label text  
- `xs` = optional xs (default 200) 
+ `xs` = optional width (default 200)  
  `txt1` = text of 1. entry  
  `txt2` = text of 2. entry and so on  
+ if `txt1` = "#g" fill list with GPIOs (used or not available ones are greyed out)  
+ if `txt1` = "#gr" same as "#g" + few more GPIOs (maybe not available on your module)  
+ if `txt1` starts with # and a number range like "#5-10" an number range from 5 to 10 ist presented  
+ 
+ special selector for SML descriptor files  
+ `smlpd(json_url label sel)`  
+ `json_url` = url of a json file with directory of descriptor files  
+ `label` = label text  
+ `sel` = variable of selected entry   
   
 #### Radio button
 
  `rb(vn label (xs) txt1 txt2 ... txtn)`  
  `vn` = name of variable to hold selected state  
  `label` = label text  
- `xs` = optional xs (default 200) 
+ `xs` = optional width (default 200) 
  `txt1` = text of 1. entry  
  `txt2` = text of 2. entry and so on  
     
@@ -420,7 +436,7 @@ remark: state variable names used for IO in the web interface may not contain an
  `ck(vn txt (xs))`  
  `vn` = name of variable to hold checkbox state  
  `txt` = label text   
- `xs` = optional xs (default 200) 
+ `xs` = optional width (default 200) 
 
 #### Slider
 
@@ -443,7 +459,7 @@ remark: state variable names used for IO in the web interface may not contain an
  `tm(vn lbl (xs))`  
  `vn` = name of number variable to hold time HHMM as number e.g. 1900 means 19:00  
  `lbl` = label text  
- `xs` = optional xs (default 70)  
+ `xs` = optional width (default 70)  
   
 #### Number Input  
  `nm(min max step vn txt (xs) (prec))`  
@@ -452,7 +468,7 @@ remark: state variable names used for IO in the web interface may not contain an
  `step` = number step value for up/down arrows  
  `vn` = name of number variable to hold number  
  `txt` = label text  
- `xs` = optional xs (default 200)  
+ `xs` = optional width (default 200)  
  `prec` = optional number precision (default 1)  
   
 #### special html options  
@@ -461,6 +477,10 @@ remark: state variable names used for IO in the web interface may not contain an
   `WSO_NODIV` = 2 force elements not in extra \<div\>  
   `WSO_FORCEPLAIN` = 4 send line in plain (no table elements)  
   `WSO_FORCEMAIN` = 8 send lines in main mode ($ mode)  
+  `WSO_FORCEGUI` = 16 force allow gui macros  
+  `WSO_FORCETAB` = 32 force tasmota tab in line  
+  `WSO_FORCESUBFILE` = 64 force allow html subfile  
+  `WSO_STOP_DIV` = 0x80 force \<div\> at end of macro  
   
 ### Google Charts  
  
@@ -538,7 +558,7 @@ Clicking  this button displays a web page with the HTML data of this section.
 all cmds like in >W apply here. these lines are refreshed frequently to show e.g. sensor values.
 lines preceded by $ are static and not refreshed and displayed below lines without $.  
 this option also enables a full webserver interface when USE_UFILESYS is active.  
-you may display files from the flash or SD filesystem by specifying the url:  IP/ufs/path  .
+you may display files from the flash or SD filesystem by specifying the url:  <IP>/ufs/<path>  .
 (supported files: *.jpg, *.html, *.txt)  
 `>w1` `>w2` `>w3`  `>w4`  `>w5`  `>w6` some as above `>w`  
 ==Requires compiling with `#define SCRIPT_FULL_WEBPAGE`.==  
@@ -575,6 +595,11 @@ If a Tasmota `SENSOR` or `STATUS` or `RESULT` message is not generated or a `Var
 
 ## Special Variables
 
+universal variables (defaults to 4, may be increased up to 10 by #define SCRIPT_LOCAL_NVARS N)
+may be used without a declaration in >D  
+numbers:	lnv0 ... lnv3
+strings:	lsv0 ... sls3
+
 (read only)  
 `upsecs` = seconds since start  
 `uptime` = minutes since start  
@@ -606,6 +631,8 @@ If a Tasmota `SENSOR` or `STATUS` or `RESULT` message is not generated or a `Var
 `gtmp` = global temperature  
 `ghum` = global humidity  
 `gprs` = global pressure  
+`encabs[x]` = absolute position of the rotary encoder (x = 1..N)  
+`encrel[x]` = relative position of the rotary encoder, the value will be reset after reading (x = 1..N)
 
 global variables  
 now optional binary mode, much faster and more precise, also supports arrays.  
@@ -620,6 +647,7 @@ now optional binary mode, much faster and more precise, also supports arrays.
 `udp(4)` = return udp remote ip as string  
 `udp(5)` = return udp remote port  
 `udp(6 url port string)` = send a string via UDP to url and port  
+`udp(7 url port array)` = send an array via UDP to url and port  
 
 when #define USE_SCRIPT_MDNS  
 `mdns(name mac type)` = open mdns service with name, mac (use device mac if '-') and type (use tasmota hostname if '-' or e.g. "shelly"). If “shelly” or “everhome” is used, a corresponding txt record is also set (for Shelly/EcoTracker emulation).  
@@ -735,7 +763,8 @@ support for onewire either directly or via serial port with onewire bus driver D
 `wsrs()` return a string read from tcp stream  
 `wsws(string)` writes a string to tcp stream  
 `wsra(array)` reads a tcp stream into array  
-`wswa(array num (type))` writes num bytes of array to tcp stream, type: 0 = uint8 (default), 1 = uint16, 2 = sint16, 3 = float    
+`wswa(array num (type))` writes num bytes of array to tcp stream, type: 0 = uint8 (default), 1 = uint16, 2 = sint16, 3 = float  
+`wsf()` flush tcp stream data  
 
 `ttget(TNUM SEL)` get tasmota timer setting from timer TNUM (1 .. 16)  
 SEL:  
@@ -875,6 +904,7 @@ A Tasmota MQTT RESULT message invokes the script's `E` section. Add `print` stat
   if dstoffset is flagged by 0x1000, 2 values 16 bits each in an array are used for 32 bit RGBW pixels
 `hsvrgb(h s v)` converts hue (0..360), saturation (0..100) and value (0..100) to RGB color  
 `dt` display text command (if #define USE_DISPLAY)  
+`sota(url)` set OTA URL (same as command OtaUrl). If `url` is empty "", set internal defined url (#define OTA_URL)  
 
 ### Subroutines and Parameters
 
@@ -1058,7 +1088,7 @@ A maximum of four files may be open at a time
 e.g., allows for logging sensors to a tab delimited file and then downloading the file ([see Sensor Logging example](#sensor-logging))   
 The script itself is also stored on the file system with a default size of 8192 characters  
 
-`fr=fo("fname" m)` open file fname, mode 0=read, 1=write, 2=append (returns file reference (0-3) or -1 for error (alternatively m may be: r=read, w=write, a=append). For files on SD card, filename must be preceded with / e.g. fr=fo("/fname.txt" 0)  
+`fr=fo("fname" m)` open file fname, mode 0=read, 1=write, 2=append (returns file reference (0-3) or -1 for error (alternatively m may be: r=read, w=write, a=append). For files on SD card, filename must be preceded with / e.g. fr=fo("/fname.txt" 0).  
 `res=fw("text" fr)` writes text to (the end of) file fr, returns number of bytes written  
 `res=fr(svar fr)` reads a string into svar, returns bytes read. String is read until delimiter (\\t \\n \\r) or eof  
 `fc(fr)` close file  
@@ -1075,8 +1105,10 @@ The script itself is also stored on the file system with a default size of 8192 
 `frb(fr)` read byte from file  
 `frw(fr url)` read file from web url, if url is an immediate string it may be longer than max string size to support very long URLs.  
 `fcs(fr "del" index ec)` = gets non string from file: del = delimiter char or string, index = n´th element, ec = end character delimiter.  
+files in file system may also be listed or downloaded via http://<ip>/ufs/<filename>
+with http://<ip>/ufs/$<varname>(;<varname2>;...) you may list variables and arrays from scripter in json format.
 
-###  Other commands   (+?? flash)
+###  time series database   (+2kB flash)
 
 `#define USE_FEXTRACT`  
 `fxt(fr ts_from ts_to col_offs accum array1 array2 ... arrayn)` read arrays from csv file from timestamp to timestamp with column offset and accumulate values into arrays1 .. N, assumes csv file with timestamp in 1. column and data values in columns 2 to n.  
@@ -1086,7 +1118,7 @@ The script itself is also stored on the file system with a default size of 8192 
 `tsn(tstamp)` convert timestamp to seconds  
 `s2t(seconds)` convert seconds to Tasmota timestamp  
 
-### Extended commands   (+0,9k flash)  
+### file system commands   (+0,9k flash)  
 
 `#define USE_SCRIPT_FATFS_EXT`  
 `fmt(0)` format flash file system (erases all data)  

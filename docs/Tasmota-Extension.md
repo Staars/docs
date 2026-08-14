@@ -22,16 +22,11 @@ Then click on "**Wifi Heap Sticker**" in the Online Store to show the details an
 
 ![Extension Manager with details of Wifi Heap Sticker](_media/berry/Tasmotaext_empty_wifiheap.png){ width="300" }
 
-Then click on "**Install**" button, and confirm:
+Then click on "**Install+Run**" button, and confirm:
 
 ![Extension Manager confirm installation](_media/berry/Tasmotaext_confirm.png){ width="350" }
 
-The page refreshes itself and shows the list of installed extensions:
-
-![Extension Manager with Wifi Heap Sticker installed](_media/berry/Tasmotaext_wifi_installed.png){ width="300" }
-
-The "Wifi Heap Sticker" extensions is installed, configured as Auto-Run but not yet running.
-Click on "**Stopped**" to run it immediately:
+The page refreshes itself and shows the list of extensions:
 
 ![Extension Manager with Wifi Heap Sticker running](_media/berry/Tasmotaext_wifi_running.png){ width="300" }
 
@@ -150,9 +145,10 @@ end
 return Minimal_Tasmota_Extension()    # return an instance of the driver
 ```
 
-## Publishing Extensions to this Repository
+## Publishing Extensions
 
-To publish a new extension to this repository and make it available in the online store, follow these steps:
+Extensions are published to the [Tasmota-Extensions Repository](https://github.com/tasmota/Tasmota-Extensions).
+To publish a new extension to the repository and make it available in the online store, follow these steps:
 
 ### 1. Prepare Your Extension Files
 
@@ -215,7 +211,7 @@ The repository includes an automated build system:
 
 ### 6. Submit Your Extension
 
-1. Fork this repository
+1. Fork [this repository](https://github.com/tasmota/Tasmota-Extensions)
 2. Add your extension folder to the `raw/` directory
 3. Test locally with `python3 gen.py`
 4. Copy manually the `.tapp` file in the `/.extensions/` directory on your Tasmota device (click on "Show hidden files" to show the hidden directory)

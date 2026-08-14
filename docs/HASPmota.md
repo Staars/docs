@@ -34,34 +34,36 @@ haspmota.start("my_template.jsonl")
 
 ## Gallery of widgets
 
-[![HASPmota label](_media/lvgl/HASPmota_1_instructions.png){width="160"}](#label)
-[![HASPmota spangroup](_media/lvgl/HASPmota_2_spangroup.png){width="160"}](#spangroup-styled-text)
-[![HASPmota btn](_media/lvgl/HASPmota_3_btn.png){width="160"}](#btn)
-[![HASPmota led](_media/lvgl/HASPmota_4_led.png){width="160"}](#led)
-[![HASPmota switch](_media/lvgl/HASPmota_5_switch.png){width="160"}](#switch)
-[![HASPmota checkbox](_media/lvgl/HASPmota_6_checkbox.png){width="160"}](#checkbox)
-[![HASPmota line](_media/lvgl/HASPmota_7_line.png){width="160"}](#line)
-[![HASPmota bar](_media/lvgl/HASPmota_8_bar.png){width="160"}](#bar)
-[![HASPmota btnmatrix](_media/lvgl/HASPmota_9_btnmatrix.png){width="160"}](#btnmatrix)
-[![HASPmota chart](_media/lvgl/HASPmota_10_chart.png){width="160"}](#chart)
-[![HASPmota image](_media/lvgl/HASPmota_11_img.png){width="160"}](#img)
-[![HASPmota roller](_media/lvgl/HASPmota_12_roller.png){width="160"}](#roller)
-[![HASPmota qrcode](_media/lvgl/HASPmota_13_qrcode.png){width="160"}](#qrcode)
-[![HASPmota slider](_media/lvgl/HASPmota_14_slider.png){width="160"}](#slider)
-[![HASPmota arc](_media/lvgl/HASPmota_15_arc.png){width="160"}](#arc)
-[![HASPmota scale 1](_media/lvgl/HASPmota_16_scale.png){width="160"}](#scale-scale_section-scale_line)
-[![HASPmota scale 2](_media/lvgl/HASPmota_17_scale.png){width="160"}](#scale-scale_section-scale_line)
-[![HASPmota spinner](_media/lvgl/HASPmota_18_spinner.png){width="160"}](#spinner)
-[![HASPmota dropdown](_media/lvgl/HASPmota_19_dropdown.png){width="160"}](#dropdown-and-dropdown_list)
-[![HASPmota fonts](_media/lvgl/HASPmota_20_fonts.png){width="160"}](#embedded-fonts)
-[![HASPmota icons](_media/lvgl/HASPmota_21_icons.png){width="160"}](#embedded-symbols)
-[![HASPmota seg7](_media/lvgl/HASPmota_22_seg7.png){width="160"}](#embedded-special-fonts)
-[![HASPmota msgbox](_media/lvgl/HASPmota_23_msgbox.png){width="160"}](#msgbox)
-[![HASPmota cpicker](_media/lvgl/HASPmota_24_cpicker.png){width="160"}](#cpicker)
-[![HASPmota tabview](_media/lvgl/HASPmota_25_tabview.png){width="160"}](#tabview)
+[![HASPmota label](_media/lvgl/HASPmota_01.png){width="160"}](#label)
+[![HASPmota spangroup](_media/lvgl/HASPmota_02.png){width="160"}](#spangroup-styled-text)
+[![HASPmota btn](_media/lvgl/HASPmota_03.png){width="160"}](#btn)
+[![HASPmota led](_media/lvgl/HASPmota_04.png){width="160"}](#led)
+[![HASPmota switch](_media/lvgl/HASPmota_05.png){width="160"}](#switch)
+[![HASPmota checkbox](_media/lvgl/HASPmota_06.png){width="160"}](#checkbox)
+[![HASPmota line](_media/lvgl/HASPmota_07.png){width="160"}](#line)
+[![HASPmota bar](_media/lvgl/HASPmota_08.png){width="160"}](#bar)
+[![HASPmota btnmatrix](_media/lvgl/HASPmota_09.png){width="160"}](#btnmatrix)
+[![HASPmota chart](_media/lvgl/HASPmota_10.png){width="160"}](#chart)
+[![HASPmota image](_media/lvgl/HASPmota_11.png){width="160"}](#img)
+[![HASPmota roller](_media/lvgl/HASPmota_12.png){width="160"}](#roller)
+[![HASPmota qrcode](_media/lvgl/HASPmota_13.png){width="160"}](#qrcode)
+[![HASPmota slider](_media/lvgl/HASPmota_14.png){width="160"}](#slider)
+[![HASPmota arc](_media/lvgl/HASPmota_15.png){width="160"}](#arc)
+[![HASPmota scale 1](_media/lvgl/HASPmota_16.png){width="160"}](#scale-scale_section-scale_line)
+[![HASPmota scale 2](_media/lvgl/HASPmota_17.png){width="160"}](#scale-scale_section-scale_line)
+[![HASPmota spinner](_media/lvgl/HASPmota_18.png){width="160"}](#spinner)
+[![HASPmota dropdown](_media/lvgl/HASPmota_19.png){width="160"}](#dropdown-and-dropdown_list)
+[![HASPmota fonts](_media/lvgl/HASPmota_20.png){width="160"}](#embedded-fonts)
+[![HASPmota icons](_media/lvgl/HASPmota_21.png){width="160"}](#embedded-symbols)
+[![HASPmota seg7](_media/lvgl/HASPmota_22.png){width="160"}](#embedded-special-fonts)
+[![HASPmota msgbox](_media/lvgl/HASPmota_23.png){width="160"}](#msgbox)
+[![HASPmota cpicker](_media/lvgl/HASPmota_24.png){width="160"}](#cpicker)
+[![HASPmota tabview](_media/lvgl/HASPmota_25.png){width="160"}](#tabview)
+[![HASPmota stripes 1](_media/lvgl/HASPmota_26.png){width="160"}](#stripes)
+[![HASPmota stripes 2](_media/lvgl/HASPmota_27.png){width="160"}](#stripes)
+[![HASPmota stripes 3](_media/lvgl/HASPmota_28.png){width="160"}](#stripes)
 
-
-The `jsonl` file used to display the widgets can be found [widget demo JSONL file](_media/lvgl/haspmota_demo.jsonl)
+The `jsonl` file used to display the widgets can be found [widget demo JSONL file](_media/lvgl/pages.jsonl)
 
 ## Minimal requirements
 
@@ -394,7 +396,7 @@ It can be used as an alternative to `flex` above as a container used in flex lay
 
 Example:
 
-![HASPmota label](_media/lvgl/HASPmota_1_instructions.png)
+![HASPmota label](_media/lvgl/HASPmota_01.png)
 
 ```json
 {"id":10,"obj":"label","x":0,"y":30,"w":240,"h":24,"text":"[1. Instructions]","text_font":"montserrat-20"}
@@ -406,30 +408,30 @@ Attributes are all related to [text](#attributes-related-to-text-content) conten
 
 Example:
 
-![HASPmota btn](_media/lvgl/HASPmota_3_btn.png)
+![HASPmota btn](_media/lvgl/HASPmota_03.png)
 
 ```json
-{"id":11,"obj":"btn","x":0,"y":60,"w":80,"h":30,"bg_color":"#4f4f4f","text_color":"#FFFF44","radius":10,"text":"Disabled","border_width":3,"border_side":15,"border_color":"#FFFF44","border_opa":210,"enabled":false}
-{"id":12,"obj":"btn","x":100,"y":60,"w":80,"h":30,"bg_color":"#4f4f4f","text_color":"#FFFF44","radius":10,"text":"Enabled","border_width":3,"border_side":15,"border_color":"#FFFF44","border_opa":210}
+{"id":11,"obj":"btn","x":5,"y":60,"w":80,"h":30,"radius":10,"text":"Disabled","enabled":false}
+{"id":12,"obj":"btn","x":100,"y":60,"w":80,"h":30,"radius":10,"text":"Enabled"}
 
-{"id":13,"obj":"btn","x":0,"y":100,"w":80,"h":30,"text_color":"#FFFF44","radius":0,"text":"Disabled","border_width":3,"border_side":15,"border_opa":210,"enabled":false,"bg_color":"#884488","border_color":"#DD3300"}
-{"id":14,"obj":"btn","x":100,"y":100,"w":80,"h":30,"text_color":"#FFFF44","radius":0,"text":"Enabled","border_width":3,"border_side":15,"bg_color":"#884488","border_color":"#DD3300"}
+{"id":13,"obj":"btn","x":5,"y":100,"w":80,"h":30,"radius":0,"text":"Disabled","enabled":false,"bg_color":"#DD0000"}
+{"id":14,"obj":"btn","x":100,"y":100,"w":80,"h":30,"radius":0,"text":"Enabled","bg_color":"#DD0000"}
 ```
 
 ### `switch`
 
 Example:
 
-![HASPmota switch](_media/lvgl/HASPmota_5_switch.png)
+![HASPmota switch](_media/lvgl/HASPmota_05.png)
 
 ```json
-{"id":11,"obj":"switch","x":0,"y":60,"w":60,"h":30,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400"}
-{"id":12,"obj":"switch","x":80,"y":60,"w":60,"h":30,"toggle":true,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400"}
-{"id":13,"obj":"switch","x":160,"y":60,"w":60,"h":30,"enabled":false,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400"}
-{"id":14,"obj":"switch","x":240,"y":60,"w":60,"h":30,"toggle":true,"enabled":false,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400"}
+{"id":11,"obj":"switch","x":0,"y":60,"w":60,"h":30}
+{"id":12,"obj":"switch","x":80,"y":60,"w":60,"h":30,"toggle":true}
+{"id":13,"obj":"switch","x":160,"y":60,"w":60,"h":30,"enabled":false}
+{"id":14,"obj":"switch","x":240,"y":60,"w":60,"h":30,"toggle":true,"enabled":false}
 
-{"id":21,"obj":"switch","x":0,"y":100,"w":130,"h":30,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400","text":"On","text_color":"#FFFF44","text_color01":"#000000"}
-{"id":22,"obj":"switch","x":140,"y":100,"w":130,"h":30,"toggle":true,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400","text":"Off","text_color":"#FFFF44","text_color01":"#000000"}
+{"id":21,"obj":"switch","x":0,"y":100,"w":130,"h":30,"text":"On"}
+{"id":22,"obj":"switch","x":140,"y":100,"w":130,"h":30,"toggle":true,"text":"Off"}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -446,13 +448,13 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota checkbox](_media/lvgl/HASPmota_6_checkbox.png)
+![HASPmota checkbox](_media/lvgl/HASPmota_06.png)
 
 ```json
-{"id":11,"obj":"checkbox","x":0,"y":60,"w":60,"h":30,"text":"","border_color10":"#FFFF88","bg_color10":"#4F4F4F","bg_color11":"#FF4400"}
-{"id":12,"obj":"checkbox","x":80,"y":60,"w":60,"h":30,"toggle":true,"text":"","border_color10":"#FFFF88","bg_color10":"#4F4F4F","bg_color11":"#FF4400"}
-{"id":13,"obj":"checkbox","x":160,"y":60,"w":60,"h":30,"text":"","enabled":false,"border_color10":"#FFFF88","bg_color10":"#4F4F4F","bg_color11":"#FF4400"}
-{"id":14,"obj":"checkbox","x":240,"y":60,"w":60,"h":30,"text":"","toggle":true,"enabled":false,"border_color10":"#FFFF88","bg_color10":"#4F4F4F","bg_color11":"#FF4400"}
+{"id":11,"obj":"checkbox","x":0,"y":60,"w":60,"h":30,"text":""}
+{"id":12,"obj":"checkbox","x":80,"y":60,"w":60,"h":30,"toggle":true,"text":""}
+{"id":13,"obj":"checkbox","x":160,"y":60,"w":60,"h":30,"text":"","enabled":false}
+{"id":14,"obj":"checkbox","x":240,"y":60,"w":60,"h":30,"text":"","toggle":true,"enabled":false}
 ```
 
 Attribute name|Details
@@ -467,12 +469,12 @@ Attribute name|Details
 
 Example:
 
-![HASPmota slider](_media/lvgl/HASPmota_14_slider.png)
+![HASPmota slider](_media/lvgl/HASPmota_14.png)
 
 ```json
-{"id":11,"obj":"slider","x":0,"y":60,"w":100,"h":10,"bg_color":"#FFFF88","bg_color10":"#FFFF88","bg_color20":"#FF4400","val":65}
-{"id":12,"obj":"slider","x":0,"y":90,"w":180,"h":20,"bg_color":"#4F4F4F","bg_color10":"#00FF00","bg_color20":"#FF4400","val":40,"bg_opa":255,"border_color":"#FFFF88","border_width":2,"pad_all":6,"radius":6}
-{"id":13,"obj":"slider","x":0,"y":120,"w":180,"h":15,"bg_color":"#4F4F4F","bg_opa":255,"bg_color10":"#4444FF","bg_color20":"#FF4400","val":26,"min":-20,"max":30,"bg_grad_color10":"#FF4400","bg_grad_dir10":2}
+{"id":11,"obj":"slider","x":0,"y":60,"w":100,"h":10,"val":65}
+{"id":12,"obj":"slider","x":0,"y":90,"w":180,"h":20,"bg_color":"#000044","bg_color10":"#00FF00","bg_color20":"#FFFFFF","val":40,"bg_opa":255,"border_color":"#1FA3EC","border_width":2,"pad_all":6,"radius":6}
+{"id":13,"obj":"slider","x":0,"y":130,"w":180,"h":15,"bg_color":"#4F4F4F","bg_opa":255,"bg_color10":"#00FF00","bg_color20":"#FFFFFF","val":26,"min":-20,"max":30,"bg_grad_color10":"#FF4400","bg_grad_dir10":2}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -492,10 +494,10 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota bar](_media/lvgl/HASPmota_8_bar.png)
+![HASPmota bar](_media/lvgl/HASPmota_08.png)
 
 ```json
-{"id":11,"obj":"bar","x":0,"y":60,"w":100,"h":10,"bg_color":"#FFFF88","bg_color10":"#FFFF88","val":65}
+{"id":11,"obj":"bar","x":0,"y":60,"w":100,"h":10,"val":65}
 {"id":12,"obj":"bar","x":0,"y":90,"w":180,"h":20,"bg_color":"#4F4F4F","bg_color10":"#00FF00","val":40,"bg_opa":255,"border_color":"#FFFF88","border_width":2,"pad_all":6,"radius":6}
 {"id":13,"obj":"bar","x":0,"y":120,"w":180,"h":15,"bg_color":"#4F4F4F","bg_opa":255,"bg_color10":"#4444FF","val":26,"min":-20,"max":30,"bg_grad_color10":"#FF4400","bg_grad_dir10":2}
 ```
@@ -516,27 +518,27 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota scale 1](_media/lvgl/HASPmota_16_scale.png)
+![HASPmota scale 1](_media/lvgl/HASPmota_16.png)
 
 ```json
-{"id":11,"obj":"scale","x":10,"y":60,"w":200,"h":30,"min":10,"max":40,"total_tick_count":31,"major_tick_every":5,"label_show":true,"line_color":"#FFFF88","line_color10":"#00FF00","line_color30":"#00FF00","line_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5,"pad_top":10}
-  {"id":12,"obj":"bar","parentid":11,"y":-8,"w%":100,"h":6,"radius":0,"radius10":0,"bg_color":"#4F4F4F","bg_color10":"#FFFF88","val":27}
+{"id":11,"obj":"scale","x":10,"y":60,"w":200,"h":30,"min":10,"max":40,"total_tick_count":31,"major_tick_every":5,"label_show":true,"line_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5,"pad_top":10}
+  {"id":12,"obj":"bar","parentid":11,"y":-8,"w%":100,"h":6,"val":27}
 
-{"id":22,"obj":"scale","x":240,"y":35,"w":74,"h":140,"min":0,"max":100,"mode":4,"total_tick_count":21,"major_tick_every":5,"label_show":true,"line_color":"#4444FF","line_color10":"#4444FF","line_color30":"#AAAAFF","line_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5,"text_src":["0 °C", "25 °C", "50 °C", "75 °C", "100 °C"],"bg_color":"#607D8B","bg_opa":127,"pad_left":16,"radius":8,"pad_ver":12}
+{"id":22,"obj":"scale","x":240,"y":35,"w":74,"h":140,"min":0,"max":100,"mode":4,"total_tick_count":21,"major_tick_every":5,"label_show":true,"line_color":"#4444FF","line_color10":"#4444FF","line_color30":"#AAAAFF","line_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5,"text_src":["0 °C", "25 °C", "50 °C", "75 °C", "100 °C"],"bg_color":"#000044","bg_opa":127,"pad_left":16,"radius":8,"pad_ver":12}
   {"id":23,"obj":"scale_section","parentid":22,"min":75,"max":100,"line_color":"#FF4400","line_width":3,"line_color10":"#FF4400","line_width10":4,"text_color10":"#FF4400","line_color30":"#FF4400","line_width30":3}
-  {"id":24,"obj":"bar","parentid":22,"x":-10,"h%":100,"w":6,"radius":0,"radius10":0,"bg_color":"#4F4F4F","bg_color10":"#AAAAFF","val":27}
+  {"id":24,"obj":"bar","parentid":22,"x":-10,"h%":100,"w":6,"radius":0,"radius10":0,"bg_color":"#4F4F4F","bg_color10":"#FFFFFF","val":27}
 ```
 
-![HASPmota scale 2](_media/lvgl/HASPmota_17_scale.png)
+![HASPmota scale 2](_media/lvgl/HASPmota_17.png)
 
 ```json
-{"id":21,"obj":"scale","x":10,"y":60,"w":120,"h":120,"min":10,"max":40,"mode":8,"bg_opa":255,"bg_color":"#662222","radius":32767,"clip_corner":true,"label_show":true,"total_tick_count":31,"major_tick_every":5,"length10":10,"length30":5,"angle_range":270,"rotation":135,"arc_color":"#FFFF88","line_color10":"#FFFF88","line_color30":"#FFFF88","arc_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5}
+{"id":21,"obj":"scale","x":10,"y":60,"w":120,"h":120,"min":10,"max":40,"mode":8,"bg_opa":255,"radius":32767,"clip_corner":true,"label_show":true,"total_tick_count":31,"major_tick_every":5,"length10":10,"length30":5,"angle_range":270,"rotation":135,"arc_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5}
   {"id":22,"obj":"scale_line","parentid":21,"line_color":"#00FF00","line_width":4,"line_rounded":true,"needle_length":50,"val":22}
   {"id":23,"obj":"scale_line","parentid":21,"line_color":"#FF4400","line_width":6,"line_rounded":true,"needle_length":30,"val":33}
 
 {"id":31,"obj":"scale","x":180,"y":80,"w":80,"h":80,"min":0,"max":100,"mode":16,"bg_opa":0,"label_show":true,"total_tick_count":21,"major_tick_every":5,"text_src":["0 °C", "25 °C", "50 °C", "75 °C", "100 °C"],"arc_color":"#4444FF","line_color10":"#4444FF","line_color30":"#AAAAFF","text_color":"#AAAAFF","arc_width":2,"line_width10":2,"line_width30":2,"length10":10,"length30":5}
   {"id":32,"obj":"scale_section","parentid":31,"min":75,"max":100,"arc_color":"#FF4400","arc_width":3,"line_color10":"#FF4400","line_width10":4,"text_color10":"#FF4400","line_color30":"#FF4400","line_width30":3}
-  {"id":33,"obj":"scale_line","parentid":31,"line_color":"#AAAAFF","line_width":10,"line_rounded":true,"needle_length":30,"val":37}
+  {"id":33,"obj":"scale_line","parentid":31,"line_color":"#1FA3EC","line_width":10,"line_rounded":true,"needle_length":30,"val":37}
 ```
 
 Note: there is no current `val` on the scale object. It must be done with a second `bar` object for linear scale or with a `scale_meter` sub-object for circular scale.
@@ -606,11 +608,11 @@ For linear scales, you can just use a `bar` sub-object. It inherits `min` and `m
 
 Example:
 
-![HASPmota arc](_media/lvgl/HASPmota_15_arc.png)
+![HASPmota arc](_media/lvgl/HASPmota_15.png)
 
 ```json
-{"id":11,"obj":"arc","x":10,"y":60,"w":100,"h":100,"arc_color10":"#FFFF88","bg_color20":"#FF4400","min":-20,"max":40,"val":26,"text":"76%","label_to_angle":-20}
-{"id":12,"obj":"arc","x":150,"y":60,"w":100,"h":120,"arc_color10":"#00FF00","bg_color20":"#FF4400","val":65,"text":"Nominal","angle":-40,"border_width20":4,"border_color20":"#FFFFFF","end_angle":310}
+{"id":11,"obj":"arc","x":10,"y":60,"w":100,"h":100,"min":-20,"max":40,"val":26,"text":"76%","label_to_angle":-20}
+{"id":12,"obj":"arc","x":150,"y":60,"w":100,"h":120,"arc_color10":"#00FF00","bg_color20":"#00FF00","val":65,"text":"Nominal","angle":-40,"border_width20":3,"border_color20":"#FFFFFF","end_angle":310}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -638,7 +640,7 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota image](_media/lvgl/HASPmota_11_img.png)
+![HASPmota image](_media/lvgl/HASPmota_11.png)
 
 ```json
 {"id":11,"obj":"img","x":10,"y":60,"raw":"iVBORw0KGgoAAAANSUhEUgAAADgAAABACAYAAABP97SyAAAACXBIWXMAAAeDAAAHgwGiB5NRAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAACLxJREFUaIHVmntwlNUZxn/vt7tZArmQAALBVoTaoEIoeKOmSgIK4gwJCSRltE4VlBS0M9bWsTNOq0yn/YMynakdRSiO2kq9ACEbqEBVSORmqwGHS7202mpF0USQ3ZDs9Xv7xzqTkOzlfLtbC89MZjLved7Lk3O+L+d7zxFV5XyFtFW7OVm8FOwlIJcCMdD9IKu13rcbQM5XgfLHucMYNqQFuCHBsKI8oAt9vz5/BTbXrgWWpaAoMPu8FCjNtcuAtWmJyvbzTqBsmj8by9oOeAzoX1j/64JyCdm04DrEasZMHADnjUDZVDMHS3cgFDlwO3zOCxREpLnmXizZCgx16LzmnH4GZWNjKa7QeqAuA+/N1Psa3DmvKgeQlSstKg59D5euBkY5D8A79ISXKKrn1AzKuiYPo040YvMThG9lFETxY3O1NvjeATgnZlCaa6aDLGAkS1HKkIxD9WKxSBfGxcFXLFC23+ylW0pwu8rBmgo6FeUGkK/nIHwvQq3W+V46K2cul6i01E1E7Rko00Amgl0GMgLwAiXAsJwlOxsJxUEOZrCpTSYh1m2HeyaUF8iEym57yJj4iEIWa80BTmBLoy5q2ZNoMOMZXNEmCxTuA67rb49h/aszWvzRW6GLvP8MXTg1huXNKIEZ9uGmUWt8HycjOBa4fLdUYrEK5dp0XIXAF3bh4SPBCe53QxdWRNWV7yhZqtDCI3SOuV+XrY2kIhoLbNomQ6WAVQIryGDtKQQ+i5W8+dqZy0Z9Eh0xyal/H+QoYt+jda3tRmwTgStekQp18TyQRWF9iOJ++0jwos6O4KTpUdtl+uIJoDzMCP8jWrU7aporrcDlu2QWFs1AsWlQU6hy8v3I2CN7z0yd0qt5pWnoO8mP1Oq8F0NOcqQUuLxNFiM8jZLnJKhTCJw5HhnZsat72qRuzb8gBXUnMW+dNrzQaxw7mcAftMt8UZr5KjcDQs8H4TFvvBKYPi2MuzAJazf5kXmmM5lYYOuwabbt2viJFTtxKC+me7zhSX7RkVmU7giqnDwavPjogeDkb9sqiT5u12m9r8kk1mCBW4pGIHQAF/Wzxvxiv9nujfb+ZUjoqmh8Z5IKnwJ7gA4RPsXmc1vII/4cXyIwg/hPyjgxrH/s7L7K/2F49BWDR/VOrW99Ik0dCQT6ip9FdXEyB4Wug57I0efyQxXdlvZ/MYQQNmPz2Jpq3ZcucdPLUmx5aER5AJiYgqpd0eH7tnXPuDxo55X0swdRnaYLW99OledsgVuKahFa0hUHoIL/b3mRg38aGro6ovpqzOaetbP0PRPf/mjqEI8VoAn4OSm+/RTp2tMz5b2/B8df08+8Q+t981LF7xO4TjxcUHgMuMS4OiF4Suy7Smq6nzH2SYIfviRlMQ/NCtek4nVFi9t9/sorI7jj/z9F52td67Zk/L6ezAUFd+JEHJwmJtW5EAfwuxv1416oAjak4o10n555R+mOzjJ317G4RVbLypVJe0vxgZVigfzIQT29KPOoP/2aA5+0eLJKg5938n0g6YwAWNjja4r2l1cPPdSOUs7lHYna919yAaYWzcXZ0rybOv8BY74DvNCgsbCHW4Cjaaju8iH/mdlYtHtfnit6RzJSXKDYtxpXoLRS63/SmJ8BnqjUgCUsIf5RmRKl7kDlbSUvTb5p56ixicYttosXlfmGuSOo5WQpZ4xHZ+rrwPMmXA/RyRPyuhJqsAgXXg3G3eLnqP/ifUNu1pAYD6LYJlwV5iSyW9hUmmfk98bcHOCx2fo+gumzPiOR0cKSqYYBPiMc2G/IzRkUs40HMO6uV2T0QKOF6jcMA+ynQWPmpeUIMV40pXpcXDzQZiFcaOYuR8yryh3GungXIWxEFr420GShJPvuOhtqf+qstNzgoSqNonSacNUerMUChpilkm5HleUQKpwx4iXQYgFBoyyWGv4hcg9R43PBQZNgAX4jV5tBb6ivAo0bxYX5EdrpgQYL+MzI1bIuNS8rdxheykTSdxAAUOHzgTYL5J1E5MHeer2z0nIDy0XKD9oBGPR1bwFvGTqX0Tx8uoNkOYGA6T75+Noq7RpotJDYXuNsLr3LmJsDLN8l4wDTlXMokdHi1Jm9iOGbVHUprcWmO5/sYfEwhndiFP6cOMTtGkR52TClB5tfGnKzwordUg7cbkhXsdmaaCD+wav6B/PU2oCvcJE53znuOyD5KmzAvKu+f80sPZ5oIC7wdPdWMNsOAYLyNC3DEzRjc4OeII8CxvFF+G2ysbjA+DL9jXkJMhTsVloLKsx9DLBRXJGWotUFiJOLPx+MVrYkG+xrt7m8jwKDXrMpUIZt7aOlcKEDn+TYPqIIT2GrB368uMf7pqmbwi8eqtKk54V9Ams6A8BPHZZVALIRX9E6WoeVOfTtQ8vwOYQiHcDNAFdGPFO8KiYb7I6x7aRsgA04mxChpfBV4DvOq9QeRB4h5nqc+lMfpKW3iZtThTcB9yFUDxx+1RtpfzY/ODNFhKglXPtlcyopBh++tJSMh9hB4vdaMoENvAG0gRxF7Q8RVzeibmKMxMU3Ua4BnQ0kPZKzlRP3lgZKI8kOX5UH1lTrqnTFJD4f9BXNR2nh/3yfdHN+aP/L3nCi2xzbHq+iRkl/wSCxgFr/VtB7si0wW8wN5Q26oCDw17CHW0zEQaoZWhBYg/BgFvVljQJbKsbFrL4jOeFwOMTNT1RqwDRG6iVY6/8V8Ra68bWNHEMW9Xg/iv/GrkiQ6vVz9aSTAOmfsVr/k1+29k13OjlFue2u8CqP2QXc5FQcOLnK1TqsDNt6CuRGp0myQBfo3SwIvJBpAOeX8XyF30VlNZj2UzNCDGU9Uf0ZDYGsVk5mtw2fkiGUFCxB5X5gfDYFDEAYZQM2q1joT3m5wBTZXYjdKC7cRTcieitQg/kpVX/ENwYizxG2n8l2xgYidzd+28TN6aIrsPV6hMuActBxIIXAcOL91x7gE+DfKMcQfR1lD3UBs85eBvgvt7U0RJwz7ZIAAAAASUVORK5CYII="}
@@ -672,10 +674,10 @@ f.close()
 
 Example:
 
-![HASPmota roller](_media/lvgl/HASPmota_12_roller.png)
+![HASPmota roller](_media/lvgl/HASPmota_12.png)
 
 ```json
-{"id":11,"obj":"roller","x":10,"y":55,"options":"Option 1\nOption 2\nOption 3\nOption 4","val":1,"bg_color50":"#FF4400","text_color":"#FFFF88","text_color50":"#000000","border_color":"#FFFF88"}
+{"id":11,"obj":"roller","x":10,"y":55,"options":"Option 1\nOption 2\nOption 3\nOption 4","val":1}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -691,11 +693,11 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota dropdown](_media/lvgl/HASPmota_19_dropdown.png)
+![HASPmota dropdown](_media/lvgl/HASPmota_19.png)
 
 ```json
-{"id":11,"obj":"dropdown","x":10,"y":55,"direction":3,"options":"Option 1\nOption 2\nOption 3\nOption 4","val":1,"bg_color50":"#FF4400","text_color":"#FFFF88","text_color50":"#FFFF88","border_color":"#FFFF88"}
-  {"id":12,"obj":"dropdown_list","parentid":11,"h":90,"text_color":"#EAEAEA","bg_color51":"#FF4400"}
+{"id":11,"obj":"dropdown","x":10,"y":55,"direction":3,"options":"Option 1\nOption 2\nOption 3\nOption 4","val":1}
+  {"id":12,"obj":"dropdown_list","parentid":11,"h":90}
 ```
 
 Attribute name|Details
@@ -720,10 +722,10 @@ Attribute name|Details
 
 Example:
 
-![HASPmota spinner](_media/lvgl/HASPmota_18_spinner.png)
+![HASPmota spinner](_media/lvgl/HASPmota_18.png)
 
 ```json
-{"id":11,"obj":"spinner","x":10,"y":60,"w":100,"h":100,"angle":200,"speed":5000,"arc_color":"#4F4F4F","arc_color10":"#FFFF88"}
+{"id":11,"obj":"spinner","x":10,"y":60,"w":100,"h":100,"angle":200,"speed":5000,"arc_color":"#000044","arc_color10":"#1FA3EC"}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -735,12 +737,12 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota btnmatrix](_media/lvgl/HASPmota_9_btnmatrix.png)
+![HASPmota btnmatrix](_media/lvgl/HASPmota_09.png)
 
 Example from `pages.jsonl`:
 
 ```json
-{"id":11,"obj":"btnmatrix","x":5,"y":60,"w":310,"h":125,"bg_color":"#4F4F4F","options":["1","2","3","4","5","\n","6","7","8","9","0","\n","Action1","Action2",""],"border_color30":"#FFFF88","border_width30":2,"bg_color30":"#4F4F4F","text_color30":"#FFFF88","border_color":"#4F4F4F"}
+{"id":11,"obj":"btnmatrix","x":5,"y":60,"w":310,"h":125,"bg_color":"#000044","options":["1","2","3","4","5","\n","6","7","8","9","0","\n","Action1","Action2"],"border_color30":"#1FA3EC","border_width30":2,"bg_color30":"#000044","text_color30":"#FFFFFF","border_color":"#000044"}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -769,7 +771,7 @@ xx:xx:25.737 {'hasp': {'p9b11_0': {'event': 'up'}}}
 
 Example:
 
-![HASPmota led](_media/lvgl/HASPmota_4_led.png)
+![HASPmota led](_media/lvgl/HASPmota_04.png)
 
 Example from `pages.jsonl`:
 
@@ -796,12 +798,12 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota line](_media/lvgl/HASPmota_7_line.png)
+![HASPmota line](_media/lvgl/HASPmota_07.png)
 
 Example from `pages.jsonl`:
 
 ```json
-{"id":11,"obj":"line","x":0,"y":60,"w":100,"h":50,"line_color":"#FFFF88","line_width":3,"points":[[0,0],[30,40],[65,15],[90,50]]}
+{"id":11,"obj":"line","x":0,"y":60,"w":100,"h":50,"line_width":3,"points":[[0,0],[30,40],[65,15],[90,50]]}
 {"id":12,"obj":"line","x":120,"y":60,"w":100,"h":50,"line_color":"#00FF00","line_width":5,"points":[[0,0],[30,40],[65,15],[90,50]],"y_invert":true,"line_rounded":true}
 ```
 
@@ -817,11 +819,11 @@ Attribute name|LVGL equivalent|Details
 
 The `chart` object allows to track values over time and show them in a graph.
 
-![HASPmota chart](_media/lvgl/HASPmota_10_chart.png)
+![HASPmota chart](_media/lvgl/HASPmota_10.png)
 
 Example of `pages.jsonl`:
 ```json
-{"page":10,"id":10,"obj":"chart","x":10,"y":60,"w":230,"h":120,"bg_color":"#440000","border_color":"#FFFF44","bg_opa":100,"border_color":"#0099EE","border_width":1,"radius":0,"pad_all":2,"y_min":0,"y_max":50,"point_count":50,"height10":0,"width10":0,"v_div_line_count":0,"h_div_line_count":5,"line_color":"#555555","line_width30":3}
+{"page":10,"id":10,"obj":"chart","x":10,"y":60,"w":230,"h":120,"pad_all":2,"y_min":0,"y_max":50,"point_count":50,"height10":0,"width10":0,"v_div_line_count":0,"h_div_line_count":5,"line_color":"#555555","line_width30":3}
 
 {"comment":"--- Add random values to chart every second ---","berry_run":"tasmota.add_cron('*/1 * * * * *', def () import math var val = math.rand() % 50 global.p10b10.val = val val = math.rand() % 50 global.p10b10.val2 = val end, 'hm_every_1_s_chart')"}
 ```
@@ -858,7 +860,7 @@ Attribute name|LVGL equivalent|Details
 
 The `cpicker` (color picker) object allows to select a color, encoded as `#RRGGBB` where RR/GG/BB are Hex values for Red/Green/Blue. Color Picker has 3 modes: "hue", "saturation", "value"; use long press to change mode.
 
-![HASPmota cpicker](_media/lvgl/HASPmota_24_cpicker.png)
+![HASPmota cpicker](_media/lvgl/HASPmota_24.png)
 
 Example of `pages.jsonl`:
 ```json
@@ -873,18 +875,94 @@ Attribute name|LVGL equivalent|Details
 `scale_width`|`arc_width`|(int) Set or read the width of the ring
 `pad_inner`||This attribute is ignored but present for OpenHASP compatibility. Since LVGL 8, there is no inner circle showing the color. There color is shown on the knob instead
 
+### `stripes`
+
+Available since Tasmota v15.6. This object is not part of OpenHASP.
+
+The `stripes` object draws a rectangle filled with a repeating pattern of
+straight stripes at an arbitrary angle, on top of the regular background. The
+background color/opacity, stripe color/opacity, the width of the stripes and of
+the gaps between them, and the angle of the pattern are all configurable. It is
+handy for decorative panels, progress-like fills, or hazard/warning banners.
+
+The background, border, radius and rounded corners are the standard `lv.obj`
+styles, so the stripes are always clipped to the widget shape (including rounded
+corners), and the border is drawn on top of the stripes.
+
+Example:
+
+![HASPmota stripes 1](_media/lvgl/HASPmota_26.png)
+
+```
+{"id":21,"obj":"label","x":10,"y":56,"w":145,"h":14,"text":"0deg  10/10","align":1,"text_font":"montserrat-14"}
+{"id":11,"obj":"stripes","x":10,"y":71,"w":145,"h":50,"radius":6,"border_side":0,"bg_color":"#FFFFFF","stripe_color":"#1FA3EC","stripe_opa":255,"stripe_width":10,"gap_width":10,"angle":0}
+
+{"id":22,"obj":"label","x":165,"y":56,"w":145,"h":14,"text":"45deg  10/10","align":1,"text_font":"montserrat-14"}
+{"id":12,"obj":"stripes","x":165,"y":71,"w":145,"h":50,"radius":6,"border_side":0,"bg_color":"#FFFFFF","stripe_color":"#1FA3EC","stripe_opa":255,"stripe_width":10,"gap_width":10,"angle":45}
+
+{"id":23,"obj":"label","x":10,"y":126,"w":145,"h":14,"text":"45deg  wide 20/6","align":1,"text_font":"montserrat-14"}
+{"id":13,"obj":"stripes","x":10,"y":141,"w":145,"h":50,"radius":6,"border_side":0,"bg_color":"#FFFFFF","stripe_color":"#1FA3EC","stripe_opa":255,"stripe_width":20,"gap_width":6,"angle":45}
+
+{"id":24,"obj":"label","x":165,"y":126,"w":145,"h":14,"text":"45deg  thin 4/16","align":1,"text_font":"montserrat-14"}
+{"id":14,"obj":"stripes","x":165,"y":141,"w":145,"h":50,"radius":6,"border_side":0,"bg_color":"#FFFFFF","stripe_color":"#1FA3EC","stripe_opa":255,"stripe_width":4,"gap_width":16,"angle":45}
+```
+
+Other examples:
+
+![HASPmota stripes 2](_media/lvgl/HASPmota_27.png)
+![HASPmota stripes 3](_media/lvgl/HASPmota_28.png)
+
+Attribute name|Details
+:---|:---
+stripe_color | Color of the stripes, format `#RRGGBB`
+stripe_opa | Opacity of the stripes, `0` transparent .. `255` opaque
+stripe_width | Width (thickness) of each stripe in pixels, minimum `1`
+gap_width | Width of the gap between two stripes in pixels, `0` for contiguous stripes
+angle | Angle of the stripes in degrees. `0` is horizontal, `90` is vertical. Any value is accepted and normalized to `0..359`
+bg_color | Color of the background behind the stripes (standard `lv.obj` style)
+bg_opa | Opacity of the background, `0` transparent .. `255` opaque
+radius | Radius of the rounded corners, stripes are clipped to the rounded shape
+border_width border_color border_side | Standard border styling, drawn on top of the stripes
+
+#### Animated stripes~
+
+The `stripes` object has no offset/phase attribute, so to animate a
+"barber-pole" or scrolling warning-sign effect, place a `stripes` child inside a
+clipping container and shift its `x` (or `y`) position over time. Keep the
+`angle` constant; because the stripe pattern repeats, wrapping the position back
+by exactly one horizontal period makes the motion seamless.
+
+The child must be **wider than the container by at least one horizontal period**:
+as `x` decreases from `0` to `-period`, the child slides left by that amount, so
+its right edge must still reach the container's right edge at the end of the
+scroll. Minimum child width: `container_width + period`.
+
+For stripes at 45°, the horizontal period is `(stripe_width + gap_width) * sqrt(2)`.
+In the example below `stripe_width + gap_width = 24`, giving a horizontal period
+of `round(24 * 1.414) = 34` px. Container width is `280`, so minimum child width
+is `280 + 34 = 314`; we use `340` for a comfortable margin.
+
+```
+{"id":10,"obj":"obj","x":20,"y":80,"w":280,"h":80,"radius":10,"pad_all":0,"bg_color":"#FFD500","bg_opa":255,"border_color":"#000000","border_width":6}
+  {"id":11,"obj":"stripes","parentid":10,"x":0,"y":0,"w":340,"h":80,"bg_color":"#FFD500","stripe_color":"#000000","stripe_opa":255,"stripe_width":12,"gap_width":12,"angle":45}
+
+{"comment":"--- Scroll the stripes one horizontal period (round(24*sqrt2)=34) then wrap, seamless ---","berry_run":"def warn_scroll() if global.p28b11 var x = global.p28b11.x - 3 if x <= -34 x += 34 end global.p28b11.x = x end tasmota.set_timer(60, warn_scroll) end warn_scroll()"}
+```
+
+Note: `clip_corner`, `scrollbar_mode:0` and `border_post` are already the defaults on the `stripes` widget, so you only need to set them explicitly on the outer `obj` container.
+
 ### `spangroup` (styled text)
 
 !!!note "Available (since Tasmota v13.4). This object is not part of OPENhasp."
 
 The `spangroup` object is equivalent to HTML `<span>` and allows to have a text area composed of multiple fragments, each fragment with its own style, size, font, color...
 
-![HASPmota spangroup](_media/lvgl/HASPmota_2_spangroup.png)
+![HASPmota spangroup](_media/lvgl/HASPmota_02.png)
 
 Example:
 
 ```json
-{"id":11,"obj":"spangroup","x":0,"y":60,"w":300,"h":115,"text_font":"robotocondensed-16","bg_color":"#000088","bg_opa":255}
+{"id":11,"obj":"spangroup","x":0,"y":60,"w":300,"h":115,"text_font":"robotocondensed-16","bg_color":"#000044","bg_opa":255}
   {"id":12,"obj":"span","parentid":11,"text":"This is "}
   {"id":13,"obj":"span","parentid":11,"text":"RED","text_color":"#FF0000","text_font":"montserrat-28"}
   {"id":14,"obj":"span","parentid":11,"text":" and this is "}
@@ -923,19 +1001,19 @@ Attribute name|LVGL equivalent|Details
 
 The `tabview` can be used to organize content in tabs.
 
-![HASPmota tabview](_media/lvgl/HASPmota_25_tabview.png)
+![HASPmota tabview](_media/lvgl/HASPmota_25.png)
 
 Example:
 
 ```json
-{"id":10,"obj":"tabview","x%":5,"y":60,"h%":55,"w%":90,"tab_bar_size":40,"btn_pos":1,"bg_color":"#222222","border_width":2,"border_color":"#FFFF44","val":2}
-  {"id":51,"obj":"tab","parentid":10,"text":"Tab 1","tab_bg_color":"#000000","tab_bg_color01":"#FF4400","tab_text_color":"#FFFF44","tab_text_color01":"#FFFFFF","tab_border_color":"#FFFF44","tab_border_side":1,"tab_border_width":0,"tab_border_width01":3}
-  {"id":52,"obj":"tab","parentid":10,"text":"Tab 2","tab_bg_color":"#000000","tab_bg_color01":"#FF4400","tab_text_color":"#FFFF44","tab_text_color01":"#FFFFFF","tab_border_color":"#FFFF44","tab_border_side":1,"tab_border_width":0,"tab_border_width01":3}
-  {"id":53,"obj":"tab","parentid":10,"text":"Tab 3","tab_bg_color":"#000000","tab_bg_color01":"#FF4400","tab_text_color":"#FFFF44","tab_text_color01":"#FFFFFF","tab_border_color":"#FFFF44","tab_border_side":1,"tab_border_width":0,"tab_border_width01":3}
-    {"id":61,"obj":"switch","x":20,"y":10,"w":60,"h":30,"parentid":51,"radius":25,"radius20":25,"bg_color":"#4f4f4f","bg_color20":"#FFFF88","bg_color11":"#FF4400"}
-    {"id":71,"obj":"dropdown","x":15,"y":10,"w":110,"h":30,"parentid":52,"options":"Apple\nBanana\nOrange\nMelon","bg_color50":"#FF4400","text_color":"#FFFF88","text_color50":"#FFFF88","border_color":"#FFFF88"}
-      {"id":72,"obj":"dropdown_list","parentid":71,"text_color":"#EAEAEA","bg_color51":"#FF4400"}
-    {"id":81,"obj":"checkbox","x":15,"y":10,"w":120,"h":30,"parentid":53,"text":" Nice tabview","border_color10":"#FFFF88","bg_color10":"#4F4F4F","bg_color11":"#FF4400","text_color":"#FFFF44"}
+{"id":10,"obj":"tabview","x%":5,"y":60,"h%":55,"w%":90,"tab_bar_size":40,"btn_pos":1,"val":2}
+  {"id":51,"obj":"tab","parentid":10,"text":"Tab 1"}
+  {"id":52,"obj":"tab","parentid":10,"text":"Tab 2"}
+  {"id":53,"obj":"tab","parentid":10,"text":"Tab 3"}
+    {"id":61,"obj":"switch","x":20,"y":10,"w":60,"h":30,"parentid":51,"radius":25,"radius20":25}
+    {"id":71,"obj":"dropdown","x":15,"y":10,"w":110,"h":30,"parentid":52,"options":"Apple\nBanana\nOrange\nMelon"}
+      {"id":72,"obj":"dropdown_list","parentid":71}
+    {"id":81,"obj":"checkbox","x":15,"y":10,"w":150,"h":30,"parentid":53,"text":"Nice tabview"}
 ```
 
 You must first define a `tabview` object, and add as many as `tab` sub-objects. You need to define the `parentid` attribute to the `tabview`. Sub-objects are then placed within each `tab` as long as you define `parentid` to the `tab`.
@@ -964,11 +1042,11 @@ You must first define a `tabview` object, and add as many as `tab` sub-objects. 
 
 The `msgbox` (message box) object allows to display a pop-up with a text content and one or multiple buttons. The pop-up can be made "modal" (not impemented yet).
 
-![HASPmota msgbox](_media/lvgl/HASPmota_23_msgbox.png)
+![HASPmota msgbox](_media/lvgl/HASPmota_23.png)
 
 Example of `pages.jsonl`:
 ```json
-{"id":10,"obj":"msgbox","x":0,"y":0,"w%":80,"h":100,"text":"A message box with two buttons.","border_color":"#FF4400","bg_color":"#4f4f4f","bg_opa":200,"buttons_bg_color":"#FF4400","buttons_border_width":3,"buttons_border_color":"#FFFFFF","text_color":"#FFFFFF","options":["Apply","Close"]}
+{"id":10,"obj":"msgbox","x":0,"y":0,"w%":80,"h":100,"text":"A message box with two buttons.","options":["Apply","Close"]}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -987,10 +1065,10 @@ Attribute name|LVGL equivalent|Details
 
 Example:
 
-![HASPmota qrcode](_media/lvgl/HASPmota_13_qrcode.png)
+![HASPmota qrcode](_media/lvgl/HASPmota_13.png)
 
 ```json
-{"id":11,"obj":"qrcode","qr_text":"https://tasmota.github.io/","x":85,"y":55,"qr_size":120,"qr_light_color":"#FFFF88","qr_dark_color":"#4F4F4F"}
+{"id":11,"obj":"qrcode","qr_text":"https://tasmota.github.io/","x":85,"y":55,"qr_size":120}
 ```
 
 Attribute name|LVGL equivalent|Details
@@ -1129,7 +1207,7 @@ HASPmota can use 3 types of LVGL fonts:
 
 Use attribute like `"text_font":"<font_name>-<font_size>"`. The default is `"text_font":"robotocondensed-16"`
 
-![HASPmota fonts](_media/lvgl/HASPmota_20_fonts.png)
+![HASPmota fonts](_media/lvgl/HASPmota_20.png)
 
 Embedded font|Details
 :---|:---
@@ -1142,7 +1220,7 @@ Embedded font|Details
 
 HASPmota combines icons from LVGL and from OpenHASP.
 
-![HASPmota icons](_media/lvgl/HASPmota_21_icons.png)
+![HASPmota icons](_media/lvgl/HASPmota_21.png)
 
 You can use the following icons fonts:
 
@@ -1160,7 +1238,7 @@ Embedded font|Details
 
 The font `seg7` is used to look like 7-segment display. To improve readability, sizes up to 20 are straight, and sizes above 24 are slightly italic.
 
-![HASPmota seg7](_media/lvgl/HASPmota_22_seg7.png)
+![HASPmota seg7](_media/lvgl/HASPmota_22.png)
 
 Embedded font|Details
 :---|:---

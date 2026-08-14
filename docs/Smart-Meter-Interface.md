@@ -1268,7 +1268,42 @@ The current power and counter in high resolution are available after PIN entry w
     1,77070100100700ff@1,Verbrauch,W,Power,1
     #
     ```
+### EasyMeter M60 V14.02 (SML)
+
+Communication with the EasyM electricity meter occurs serially via two infrared data interfaces (DSS). The baud rate is 9600 Baud (8N1).
+All telegrams are encoded using the SML transport protocol (V1.04).
+
+The electricity meter is a 3-Phase AC meter that can handle two tarifs as well as counters from the grid and what was delivered to the grid.
+When the PIN is entered more information is available on via the INFO-DSS like Voltage and Power per Phase.
+
+
+There are two communication interfaces:
+
+  * INFO-DSS: Unidirectional infrared interface. Permanently outputs (every second) billing-relevant measured values and other information. (used for the script)
+  * MSB-DSS: Bidirectional infrared interface. Permanently outputs (every second) billing-relevant measured values and other information. Additionally, the MSB interface is used for setting meter parameters and controlling tariffs. (Not tested/ used for the script)
+
+For the counter value precision 1 is used for the rest i only took the numbers without any decimal points
+
+??? summary "View script" 
+    ```
 	
+	>D
+	>B
+	=>sensor53 r
+	>M 1
+	+1,3,s,16,9600,ESY
+	1,77070100010800ff@1000,Zaehlerstand,kWh,Bezug_Summe,1
+	1,77070100020800ff@1000,Einspeisung,kWh,Einspeisung_Summe,1
+	1,77070100100700ff@1,Verbrauch,W,Leistung_Total,0
+	1,77070100240700ff@1,L1,W,Leistung_L1,0
+	1,77070100380700ff@1,L2,W,Leistung_L2,0
+	1,770701004c0700ff@1,L3,W,Leistung_L3,0
+	1,77070100200700ff@1,U1,V,Spannung_L1,0
+	1,77070100340700ff@1,U2,V,Spannung_L2,0
+	1,77070100480700ff@1,U3,V,Spannung_L3,0
+	#
+	```
+ 
 ### EasyMeter Q1D (ASCII OBIS)
 
 This script is for the EasyMeter Q1DB1004 variant of the Q1D series. This variant is a one-phase one-way electricity counter with a backstop mechanism. 
@@ -2828,7 +2863,7 @@ For read-out of "Current power" the advanced data set has to be enabled in user 
     +1,3,s,20,9600,E320
     1,77070100020800ff@1000,Total Delivered,kWh,Total_out,3
     1,77070100010800ff@1000,Total Consumed,kWh,Total_in,3
-    1,77070100100700ff@1,Current power,W,Power_in,3
+    1,77070100100700ff@1,Current power,W,Power_in,19
     1,77070100600100ff@#,Server-ID,,Meter_Number,0    
     #
     ```
@@ -4260,7 +4295,7 @@ script to emulate a shelly pro 3em to use with solar storage devices e.g. marste
 
 ### Sorel LTDC (CANBus)
 
-Compile firmware with #define ```USE_SML_CANBUS```. Use a proper CAN transceiver. You need a 120Ohms resistor in the second CAN port of the controller, otherwise ESP32 device will not decode anything on the bus, the baudrate is 250 KBITS.
+Compile firmware with #define `USE_SML_CANBUS`. Use a proper CAN transceiver. You need a 120Ohms resistor in the second CAN port of the controller, otherwise ESP32 device will not decode anything on the bus, the baudrate is 250 KBITS.
 
 ??? summary "View script"
     ```
@@ -4283,7 +4318,7 @@ Compile firmware with #define ```USE_SML_CANBUS```. Use a proper CAN transceiver
 
 ### Sorel XHCC (CANBus)
 
-Compile firmware with #define ```USE_SML_CANBUS```. Use a proper CAN transceiver. You need a 120Ohms resistor in the second CAN port of the controller, otherwise ESP32 device will not decode anything on the bus, the baudrate is 250 KBITS.
+Compile firmware with #define `USE_SML_CANBUS`. Use a proper CAN transceiver. You need a 120Ohms resistor in the second CAN port of the controller, otherwise ESP32 device will not decode anything on the bus, the baudrate is 250 KBITS.
 
 ??? summary "View script"
     ```
@@ -4394,6 +4429,38 @@ The website https://www.smartcircuits.de/wattwaechter-wifi-usb/flashen/ (in Germ
     #
     ```
     
+### Siemens IM-351
+
+This device is used in the grid of Wiener Netze. Insert your Key into the script.
+
+??? summary "View script"
+    ```
+    >D
+	>B
+	=>sensor53 r
+	>M 1
+	+1,3,r,0,9600,SM
+	1,=so3,256
+	1,=so4,KEY
+	1,0209090Cx0UUuu@1,year,,year,0
+	1,0209090Cx2ss@1,month,,month,0
+	1,0209090Cx3ss@1,day,,day,0
+	;1,0209090Cx4ss@1,weekday,,weekday,0
+	1,0209090Cx5ss@1,hh,,hh,0
+	1,0209090Cx6ss@1,mm,,mm,0
+	1,0209090Cx7ss@1,ss,,ss,0
+	1,0209090Cx13UUuuUUuu@1000,Zaehlerstand,kWh,Zaehlerstand,3
+	1,0209090Cx18UUuuUUuu@1000,Einspeisung,kWh,Einspeisung,3
+	1,0209090Cx23UUuuUUuu@1000,Blindenergie,kvarh,Blindenergie,3
+	1,0209090Cx28UUuuUUuu@1000,Blindenergie Einsp,kvarh,Blindenergie Einsp,3
+	; Letzter Paramater (Precision) = add 16 to send data immediately 0 + 16 = 16
+	1,0209090Cx33UUuuUUuu@1,Momentanleistung,W,Momentanleistung,16
+	1,0209090Cx38UUuuUUuu@1,Einspeiseleistung,W,Einspeiseleistung,0
+	1,0209090Cx43UUuuUUuu@1,Blindleistung,var,Blindleistung,0
+	1,0209090Cx48UUuuUUuu@1,Blindleistung Einsp,var,Blindleistung Einsp,0
+	#
+    ```
+
 ### Siemens TD-3511
 
 This device is used in the grid of EGTF - Elektrizitäts-Genossenschaft Tacherting-Feichten eG. Read uses IEC 62056-21 data mode "C" without acknowledgement by the reading device.

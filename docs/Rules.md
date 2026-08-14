@@ -256,6 +256,10 @@ Rule1
   ON mqtt#connected DO Publish stat/topic/BLACKOUT {"From":"%Var1%","To":"%Var2%"} ENDON
 ```
 
+!!! tip
+	To see the values of used `Var<x>` and `Mem<x>` at the WebUI, add `#define USE_VIEW_RULE_MEMS_AND_VARS` to your `user_config_override.h` and [recompile](Compile-your-build).
+
+
 #### Delete rule
 
 To [clear / delete](Commands.md#rule) use double quote(s):
@@ -308,15 +312,15 @@ IF statement supports 3 formats:
 - `IF (<logical-expression>) <statement-list> ELSE <statement-list> ENDIF`  
 - `IF (<logical-expression>) <statement-list> [ELSEIF (<logical-expression>) <statement-list> ] ELSE <statement-list> ENDIF`  
 
-When the `<if-statement>` directly follows the trigger the standard 'Do' syntax applies, however, it is not necessary to use 'Backlog' within the chain
-  `Rule1 ON Power1#State DO IF (%value%==1) Backlog Power2 1;Power3 1 ENDIF ENDON` is **permitted**
+When the `<if-statement>` directly follows the trigger the standard 'Do' syntax applies, however, it is not necessary to use 'Backlog' within the chain<br>
+  `Rule1 ON Power1#State DO IF (%value%==1) Backlog Power2 1;Power3 1 ENDIF ENDON` is **permitted**<br>
   `Rule1 ON Power1#State DO IF (%value%==1) Power2 1;Power3 1 ENDIF ENDON` is also **permitted**
 
-When the `<if-statement>` is preceded by other Tasmota commands you should use `Backlog` along with `Do` , e.g.  
-  `Rule1 ON ENERGY#Current>10 DO Backlog Power1 0; IF (%var1%==1) Power1 1 ENDIF;Power 2 0;Power3 1 ENDON`
-  **and not**
-  `Rule1 ON ENERGY#Current>10 DO Power1 0; IF (%var1%==1) Power1 1 ENDIF ENDON`
-  **or**
+When the `<if-statement>` is preceded by other Tasmota commands you should use `Backlog` along with `Do` , e.g.<br>
+  `Rule1 ON ENERGY#Current>10 DO Backlog Power1 0; IF (%var1%==1) Power1 1 ENDIF;Power 2 0;Power3 1 ENDON`<br>
+  **and not**<br>
+  `Rule1 ON ENERGY#Current>10 DO Power1 0; IF (%var1%==1) Power1 1 ENDIF ENDON`<br>
+  **or**<br>
   `Rule1 ON ENERGY#Current>10 Backlog Power1 0; IF (%var1%==1) Power1 1 ENDIF ENDON`
 
 `(<logical-expression>)` example: `(VAR1>=10)`  

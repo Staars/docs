@@ -5,6 +5,11 @@ repo_name: 'arendst/tasmota'
 repo_url: 'https://github.com/arendst/tasmota'
 edit_uri: 'https://github.com/tasmota/docs/blob/master/docs/'
 docs_dir: docs
+# Ignore the accidentally copied Python virtual environment in the docs tree.
+exclude_docs: |
+  bin/**
+  lib/**
+  pyvenv.cfg
 # copyright: 'Copyright &copy; 2020 Tasmota Development Team'
 
 plugins:

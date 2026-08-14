@@ -390,12 +390,13 @@ Driver methods are called with the following parameters: `f(cmd, idx, payload, r
 - `web_add_button()`: (deprecated) synonym of `web_add_console_button()`
 - `web_add_main_button()`, `web_add_management_button()`, `web_add_console_button()`, `web_add_config_button()`: add a button to Tasmota's Web UI on a specific page
 - `web_add_handler()`: called when Tasmota web server started, and the right time to call `webserver.on()` to add handlers
-- `button_pressed()`: called when a button is pressed
 - `save_before_restart()`: called just before a restart
 - `mqtt_data(topic, idx, data, databytes)`: called for MQTT payloads matching `mqtt.subscribe`. `idx` is zero, and `data` is normally unparsed JSON.
 - `set_power_handler(cmd, idx)`: called whenever a Power command is made. `idx` is a combined index value, with one bit per relay or light currently on. `cmd` can be ignored.
-- `any_key(cmd, idx)`: called when an interaction with Button or Switch occurs. `idx` is encoded as follows: `device_save << 24 | key << 16 | state << 8 | device`
 - `display()`: called by display driver with the following subtypes: `init_driver`, `model`, `dim`, `power`.
+- `button_pressed(cmd, idx)`: called when a button is pressed. See [sample code](https://github.com/arendst/Tasmota/pull/21711#issuecomment-2198649833).
+- `button_multi_pressed(cmd, idx)`: called for button multi-press. See [sample code](https://github.com/arendst/Tasmota/pull/21711#issuecomment-2198649833).
+- `any_key(cmd, idx)`: called when an interaction with Button or Switch occurs. `idx` is encoded as follows: `device_save << 24 | key << 16 | state << 8 | device`<br> See [sample code](https://github.com/arendst/Tasmota/pull/21711#issuecomment-2198649833).
 
 Then register the driver with `tasmota.add_driver(<driver>)`.
 
@@ -498,7 +499,7 @@ A root level object called `tasmota` is created and contains numerous functions 
 Tasmota Function|Parameters and details
 :---|:---
 tasmota.get\_free\_heap<a class="cmnd" id="tasmota_get_free_heap"></a>|`() -> int`<br>Returns the number of free bytes on the Tasmota heap.
-tasmota.publish<a class="cmnd" id="tasmota_publish"></a>|`(topic:string, payload:string[, retain:bool, start:int, len:int]) -> nil`<br>_Deprecated_ see `mqtt.publish`
+tasmota.publish<a class="cmnd" id="tasmota_publish"></a>|`(topic:string, payload:string[, retain:bool, start:int, len:int, loglevel:int]) -> nil`<br>_Deprecated_ see `mqtt.publish`
 tasmota.publish\_result<a class="cmnd" id="tasmota_publish_result"></a>|`(payload:string, subtopic:string) -> nil`<br>Publishes a JSON result and triggers any associated rule. `payload` is expected to be a JSON string, and `subtopic` the subtopic used to publish the payload.
 tasmota.publish\_rule<a class="cmnd" id="tasmota_publish_rule"></a>|`(payload:string) -> handled:bool`<br>sends a JSON stringified message to the rule engine, without actually publishing a message to MQTT. Returns `true` if the message was handled by a rule.
 tasmota.cmd<a class="cmnd" id="tasmota_cmd"></a>|`(command:string [, mute:bool]) -> map`<br>Sends any command to Tasmota, like it was type in the console. It returns the result of the command if any, as a map parsed from the command output JSON. Takes an optional `mute` attribute. If `mute` is `true`, logging (serial, web, mqtt) is reduced to level `1` (only severe errors) to avoid polluting the logs.
@@ -507,6 +508,7 @@ tasmota.add\_rule<a class="cmnd" id="tasmota_add_rule"></a>|`(trigger:string, f:
 tasmota.add\_rule\_once<a class="cmnd" id="tasmota_add_rule_once"></a>|`(trigger:string, f:function [, id:any]) ->nil`<br>`(triggers:list_of_string, f:function [, id:any]) ->nil`<br>Same as `add_rule` except the rule is fired only once and then removed from rules
 tasmota.remove\_rule<a class="cmnd" id="tasmota_remove_rule"></a>|`(trigger:string [, id:any]) ->nil`<br>`(triggers:list_of_string [, id:any]) ->nil`<br>Removes a rule from the rule engine. Silently ignores the trigger(s) if no rule matches. Optional `id` to remove selectively some rules.
 tasmota.when\_network\_up<a class="cmnd" id="tasmota_when_network_up"></a>|`(f:function) ->nil`<br>Runs the provided function or closure as soon as the first network stack is available (wifi or ethernet).<br>This is to be used whenever you call network function from Berry, calling most of network functions before the network is up generally causes a crash.
+tasmota.is\_network\_up<a class="cmnd" id="tasmota_is_network_up"></a>|`() ->bool`<br>Returns `true` if network is up, Wifi or Ethernet.
 tasmota.add\_driver<a class="cmnd" id="tasmota_add_driver"></a>|`(instance) ->nil`<br>Registers an instance as a driver
 tasmota.remove\_driver<a class="cmnd" id="tasmota_remove_driver"></a>|`(instance) ->nil`<br>Removes a driver
 tasmota.gc<a class="cmnd" id="tasmota_gc"></a>|`() -> int`<br>Triggers garbage collection of Berry objects and returns the bytes currently allocated. This is for debug only and shouldn't be normally used. `gc` is otherwise automatically triggered when necessary.
@@ -524,9 +526,10 @@ tasmota.get\_option<a class="cmnd" id="tasmota_get_option"></a>|`(index:int) -> 
 tasmota.wire\_scan<a class="cmnd" id="tasmota_wire_scan"></a>|`(addr:int [, index:int]) -> wire instance or nil`<br>Scan both I^2^C buses for a device of address `addr`, optionally taking into account disabled devices via `I2CDevice`. Returns a `wire` object corresponding to the bus where the device is, or `nil` if device is not connected or disabled.
 tasmota.i2c\_enabled<a class="cmnd" id="tasmota_i2c_enabled"></a>|`(index:int) -> bool`<br>Returns true if the I^2^C module is enabled, see I^2^C page.
 tasmota.arch<a class="cmnd" id="tasmota_arch"></a>|`() -> string`<br>Returns the name of the architecture. Currently can be `esp32`, `esp32s2`, `esp32s3`, `esp32c3`
+tasmota.version<a class="cmnd" id="tasmota_version"></a>|`() -> int`<br>Returns the Tasmota version number, like 0x0F050002 for 15.5.0.2 
 tasmota.read\_sensors<a class="cmnd" id="tasmota_read_sensors"></a>|`([show_sensor:bool]) -> string`<br>Returns the value of sensors as a JSON string similar to the teleperiod. The response is a string, not a JSON object. The reason is that some sensors might produce invalid JSON. It's your code's responsibility to try parsing as JSON.<br>An optional boolean parameter (false by default) can be set to trigger a display of the new values (i.e. sends a FUNC_SHOW_SENSOR` event to drivers).
-tasmota.wifi<a class="cmnd" id="tasmota_wifi"></a>|`() -> map` or `(key:string) -> any`<br>Retrieves Wi-Fi connection info or empty map.<br>Example: `{'mac': 'aa:bb:cc:22:11:03', 'quality': 100, 'rssi': -47, 'ip': '192.168.1.102'}`<br>If a `key` is passed, the value is returned without allocating a new `map`, or `nil` if no value matches the `key`.
-tasmota.eth<a class="cmnd" id="tasmota_eth"></a>|`() -> map` or `(key:string) -> any`<br>Retrieves Ethernet connection info or empty map.<br>Example: `{'mac': 'aa:bb:cc:22:11:00', 'ip': '192.168.1.101'}`<br>If a `key` is passed, the value is returned without allocating a new `map`, or `nil` if no value matches the `key`.
+tasmota.wifi<a class="cmnd" id="tasmota_wifi"></a>|`() -> map` or `(key:string) -> any`<br>Retrieves Wi-Fi connection info or empty map.<br>Example: `{'up': true, 'mac': 'aa:bb:cc:22:11:03', 'ssid': 'JohnDoeNetwork', 'quality': 100, 'rssi': -47, 'ip': '192.168.1.102'}`<br>If a `key` is passed, the value is returned without allocating a new `map`, or `nil` if no value matches the `key`.
+tasmota.eth<a class="cmnd" id="tasmota_eth"></a>|`() -> map` or `(key:string) -> any`<br>Retrieves Ethernet connection info or empty map.<br>Example: `{'up': true, 'mac': 'aa:bb:cc:22:11:00', 'ip': '192.168.1.101'}`<br>If a `key` is passed, the value is returned without allocating a new `map`, or `nil` if no value matches the `key`.
 tasmota.webcolor<a class="cmnd" id="tasmota_webcolor"></a>|`() -> map` or `(index:integer) -> string`<br>Dump all webcolors from the Tasmota configuratio, or retrieve a specific color by index number.<br>Colors are expressed in `#RRGGBB` hex format and ready to use for HASPmota<br>Note: indices are 0-based so `1` less than in `WebColor` command<br>`0`: Global text, default `"#eaeaea"`<br>`1`: Global background, default `"#252525"`<br>`2`: Form background, default `"#4f4f4f"`<br>`3`: Input text, default `"#000000"`<br>`4`: Input background, default `"#dddddd"`<br>`5`: Console text, default `"#65c115"`<br>`6`: Console background, default `"#1f1f1f"`<br>`7`: Warning text, default `"#ff5661"`<br>`8`: Success text, default `"#008000"`<br>`9`: Button text, default `"#faffff"`<br>`10`: Button, default `"#1fa3ec"`<br>`11`: Button hovered over, default `"#0e70a4"`<br>`12`: Restart/Reset/Delete button, default `"#d43535"`<br>`13`: Restart/Reset/Delete button hover, default `"#931f1f"`<br>`14`: Save button, default `"#47c266"`<br>`15`: Save button hover, default `"#5aaf6f"`<br>`16`: Config timer tab text, default `"#faffff"`<br>`17`: Config timer tab background, default `"#999999"`<br>`18`: Module title and FriendlyName text, default `"#eaeaea"`<br>`19`: Button color when off, default `"#08405e"`
 
 #### Functions for time, timers or cron
@@ -615,7 +618,7 @@ the function should return `true` if the event was parsed or if the event should
 
 Tasmota Function|Parameters and details
 :---|:---
-mqtt.publish<a class="cmnd" id="mqtt_publish"></a>|`(topic:string, payload:string[, retain:bool, start:int, len:int]) -> nil`<br>Equivalent of `publish` command, publishes a MQTT message on `topic` with `payload`. Optional `retain` parameter.<br>`payload` can be a string or a bytes() binary array<br>`start` and `len` allow to specify a sub-part of the string or bytes buffer, useful when sending only a portion of a larger buffer.
+mqtt.publish<a class="cmnd" id="mqtt_publish"></a>|`(topic:string, payload:string[, retain:bool, start:int, len:int, loglevel:int]) -> nil`<br>Equivalent of `publish` command, publishes a MQTT message on `topic` with `payload`. Optional `retain` parameter.<br>`payload` can be a string or a bytes() binary array<br>`start` and `len` allow to specify a sub-part of the string or bytes buffer, useful when sending only a portion of a larger buffer.<br>`loglevel` specifies at what loglevel to display in logs, or `0` for no log, default is `LOG_LEVEL_INFO` (`2`).<br>When you want to skip an optional argument specify `nil`, ex: `mqtt.publish('{"k":"Testpayload"}', "/my/topic", nil, nil, nil, 0)`
 mqtt.subscribe<a class="cmnd" id="mqtt_subscribe"></a>|`mqtt.subscribe(topic:string [, function:closure]) -> nil`<br>Subscribes to a `topic` (exact match or pattern). Contrary to Tasmota's `Subscribe` command, the topic is sent as-is and not appended with `/#`. You need to add wildcards yourself. Driver method `mqtt_data` is called for each matching payload.<br>If a function/closure is added, the function is called whenever and only if an incoming messages matches the pattern for this function. The function should return `true` if message was processed, `false` if not which will let the message flow to Tasmota eventually as a command.<br>You can call mqtt.subscribe even without MQTT connection, and Tasmota will manage subscriptions upon connection, also when reconnecting after an outage. This allows code in `autoexec.be` do make a subscription, which will then have effect after connection has been established.
 mqtt.unsubscribe<a class="cmnd" id="mqtt_unsubscribe"></a>|`(topic:string) -> nil`<br>Unsubscribe to a `topic` (exact match).
 mqtt.connected<a class="cmnd" id="mqtt_connected"></a>|`mqtt.connected() -> bool`<br>Returns `true` if Tasmota is connected to the MQTT broker
@@ -626,7 +629,7 @@ Module `light` is automatically imported via a hidden `import light` command.
 
 Tasmota Function|Parameters and details
 :---|:---
-light.get<a class="cmnd" id="light_get"></a>|`(index:int) -> map`<br>Get the current status if light number `index` (default:0).<br>Example:<br>```> light.get```<br>```{'bri': 77, 'hue': 21, 'power': true, 'sat': 140, 'rgb': '4D3223', 'channels': [77, 50, 35]}```
+light.get<a class="cmnd" id="light_get"></a>|`([index:int, name:string]) -> map or value`<br>Get the current status if light number `index` (default:0).<br>Example:<br>```> light.get```<br>```{'bri': 77, 'hue': 21, 'power': true, 'sat': 140, 'rgb': '4D3223', 'channels': [77, 50, 35]}```<br>```light.get(0, 'bri')```<br>```50```
 light.set<a class="cmnd" id="light_set"></a>|`(settings:map[, index:int]) -> map`<br>Sets the current state for light `index` (default: 0.<br>Example:<br>```> light.set({'hue':120,'bri':50,'power':true})```<br>```{'bri': 50, 'hue': 120, 'power': true, 'sat': 140, 'rgb': '173217', 'channels': [23, 50, 23]}```
 light.gamma10<a class="cmnd" id="light_gamma10"></a>|`(channel) -> int`<br>Computes the gamma corrected value with 10 bits resolution for input and output. Note: Gamma is optimized for speed and smooth fading, and is not 100% mathematically accurate.<br>Input and output are in range 0..1023.
 light.reverse\_gamma10<a class="cmnd" id="light_reverse_gamma10"></a>|`(gamma) -> int`<br>Computes the reverse gamma with 10 bits resolution for input and output.<br>Input and output are in range 0..1023.
@@ -634,7 +637,7 @@ light.gamma8<a class="cmnd" id="light_gamma8"></a>|`(channel) -> int`<br>Compute
 
 ### `gpio` module
 
-This module allows to retrieve the GPIO configuration set in the templates. You need to distinguish between **logical GPIO** (like PWM, or I2C) and **physical GPIO** which represent the GPIO number of the physical pin. `gpio.pin()` transforms a logical GPIO to a physical GPIO, or `-1` if the logical GPIO is not set.
+This module allows to retrieve the GPIO configuration set in the templates. You need to distinguish between **logical GPIO** (like PWM, or I^2^C) and **physical GPIO** which represent the GPIO number of the physical pin. `gpio.pin()` transforms a logical GPIO to a physical GPIO, or `-1` if the logical GPIO is not set.
 
 Currently there is limited support for GPIO: you can only read/write in digital mode and set the GPIO mode.
 
@@ -656,7 +659,7 @@ Any internal error or using unsupported GPIO yields a Berry exception.
 
 ??? note "Possible values for Tasmota GPIOs:"
 
-    `gpio.NONE`, `gpio.KEY1`, `gpio.KEY1_NP`, `gpio.KEY1_INV`, `gpio.KEY1_INV_NP`, `gpio.SWT1`, `gpio.SWT1_NP`, `gpio.REL1`, `gpio.REL1_INV`, `gpio.LED1`, `gpio.LED1_INV`, `gpio.CNTR1`, `gpio.CNTR1_NP`, `gpio.PWM1`, `gpio.PWM1_INV`, `gpio.BUZZER`, `gpio.BUZZER_INV`, `gpio.LEDLNK`, `gpio.LEDLNK_INV`, `gpio.I2C_SCL`, `gpio.I2C_SDA`, `gpio.SPI_MISO`, `gpio.SPI_MOSI`, `gpio.SPI_CLK`, `gpio.SPI_CS`, `gpio.SPI_DC`, `gpio.SSPI_MISO`, `gpio.SSPI_MOSI`, `gpio.SSPI_SCLK`, `gpio.SSPI_CS`, `gpio.SSPI_DC`, `gpio.BACKLIGHT`, `gpio.OLED_RESET`, `gpio.IRSEND`, `gpio.IRRECV`, `gpio.RFSEND`, `gpio.RFRECV`, `gpio.DHT11`, `gpio.DHT22`, `gpio.SI7021`, `gpio.DHT11_OUT`, `gpio.DSB`, `gpio.DSB_OUT`, `gpio.WS2812`, `gpio.MHZ_TXD`, `gpio.MHZ_RXD`, `gpio.PZEM0XX_TX`, `gpio.PZEM004_RX`, `gpio.PZEM016_RX`, `gpio.PZEM017_RX`, `gpio.SAIR_TX`, `gpio.SAIR_RX`, `gpio.PMS5003_TX`, `gpio.PMS5003_RX`, `gpio.SDS0X1_TX`, `gpio.SDS0X1_RX`, `gpio.SBR_TX`, `gpio.SBR_RX`, `gpio.SR04_TRIG`, `gpio.SR04_ECHO`, `gpio.SDM120_TX`, `gpio.SDM120_RX`, `gpio.SDM630_TX`, `gpio.SDM630_RX`, `gpio.TM1638CLK`, `gpio.TM1638DIO`, `gpio.TM1638STB`, `gpio.MP3_DFR562`, `gpio.HX711_SCK`, `gpio.HX711_DAT`, `gpio.TX2X_TXD_BLACK`, `gpio.TUYA_TX`, `gpio.TUYA_RX`, `gpio.MGC3130_XFER`, `gpio.MGC3130_RESET`, `gpio.RF_SENSOR`, `gpio.AZ_TXD`, `gpio.AZ_RXD`, `gpio.MAX31855CS`, `gpio.MAX31855CLK`, `gpio.MAX31855DO`, `gpio.NRG_SEL`, `gpio.NRG_SEL_INV`, `gpio.NRG_CF1`, `gpio.HLW_CF`, `gpio.HJL_CF`, `gpio.MCP39F5_TX`, `gpio.MCP39F5_RX`, `gpio.MCP39F5_RST`, `gpio.PN532_TXD`, `gpio.PN532_RXD`, `gpio.SM16716_CLK`, `gpio.SM16716_DAT`, `gpio.SM16716_SEL`, `gpio.DI`, `gpio.DCKI`, `gpio.CSE7766_TX`, `gpio.CSE7766_RX`, `gpio.ARIRFRCV`, `gpio.ARIRFSEL`, `gpio.TXD`, `gpio.RXD`, `gpio.ROT1A`, `gpio.ROT1B`, `gpio.ADC_JOY`, `gpio.SSPI_MAX31865_CS1`, `gpio.HRE_CLOCK`, `gpio.HRE_DATA`, `gpio.ADE7953_IRQ`, `gpio.SOLAXX1_TX`, `gpio.SOLAXX1_RX`, `gpio.ZIGBEE_TX`, `gpio.ZIGBEE_RX`, `gpio.RDM6300_RX`, `gpio.IBEACON_TX`, `gpio.IBEACON_RX`, `gpio.A4988_DIR`, `gpio.A4988_STP`, `gpio.A4988_ENA`, `gpio.A4988_MS1`, `gpio.OUTPUT_HI`, `gpio.OUTPUT_LO`, `gpio.DDS2382_TX`, `gpio.DDS2382_RX`, `gpio.DDSU666_TX`, `gpio.DDSU666_RX`, `gpio.SM2135_CLK`, `gpio.SM2135_DAT`, `gpio.DEEPSLEEP`, `gpio.EXS_ENABLE`, `gpio.TASMOTACLIENT_TXD`, `gpio.TASMOTACLIENT_RXD`, `gpio.TASMOTACLIENT_RST`, `gpio.TASMOTACLIENT_RST_INV`, `gpio.HPMA_RX`, `gpio.HPMA_TX`, `gpio.GPS_RX`, `gpio.GPS_TX`, `gpio.HM10_RX`, `gpio.HM10_TX`, `gpio.LE01MR_RX`, `gpio.LE01MR_TX`, `gpio.CC1101_GDO0`, `gpio.CC1101_GDO2`, `gpio.HRXL_RX`, `gpio.ELECTRIQ_MOODL_TX`, `gpio.AS3935`, `gpio.ADC_INPUT`, `gpio.ADC_TEMP`, `gpio.ADC_LIGHT`, `gpio.ADC_BUTTON`, `gpio.ADC_BUTTON_INV`, `gpio.ADC_RANGE`, `gpio.ADC_CT_POWER`, `gpio.WEBCAM_PWDN`, `gpio.WEBCAM_RESET`, `gpio.WEBCAM_XCLK`, `gpio.WEBCAM_SIOD`, `gpio.WEBCAM_SIOC`, `gpio.WEBCAM_DATA`, `gpio.WEBCAM_VSYNC`, `gpio.WEBCAM_HREF`, `gpio.WEBCAM_PCLK`, `gpio.WEBCAM_PSCLK`, `gpio.WEBCAM_HSD`, `gpio.WEBCAM_PSRCS`, `gpio.BOILER_OT_RX`, `gpio.BOILER_OT_TX`, `gpio.WINDMETER_SPEED`, `gpio.KEY1_TC`, `gpio.BL0940_RX`, `gpio.TCP_TX`, `gpio.TCP_RX`, `gpio.ETH_PHY_POWER`, `gpio.ETH_PHY_MDC`, `gpio.ETH_PHY_MDIO`, `gpio.TELEINFO_RX`, `gpio.TELEINFO_ENABLE`, `gpio.LMT01`, `gpio.IEM3000_TX`, `gpio.IEM3000_RX`, `gpio.ZIGBEE_RST`, `gpio.DYP_RX`, `gpio.MIEL_HVAC_TX`, `gpio.MIEL_HVAC_RX`, `gpio.WE517_TX`, `gpio.WE517_RX`, `gpio.AS608_TX`, `gpio.AS608_RX`, `gpio.SHELLY_DIMMER_BOOT0`, `gpio.SHELLY_DIMMER_RST_INV`, `gpio.RC522_RST`, `gpio.P9813_CLK`, `gpio.P9813_DAT`, `gpio.OPTION_A`, `gpio.FTC532`, `gpio.RC522_CS`, `gpio.NRF24_CS`, `gpio.NRF24_DC`, `gpio.ILI9341_CS`, `gpio.ILI9341_DC`, `gpio.ILI9488_CS`, `gpio.EPAPER29_CS`, `gpio.EPAPER42_CS`, `gpio.SSD1351_CS`, `gpio.RA8876_CS`, `gpio.ST7789_CS`, `gpio.ST7789_DC`, `gpio.SSD1331_CS`, `gpio.SSD1331_DC`, `gpio.SDCARD_CS`, `gpio.ROT1A_NP`, `gpio.ROT1B_NP`, `gpio.ADC_PH`, `gpio.BS814_CLK`, `gpio.BS814_DAT`, `gpio.WIEGAND_D0`, `gpio.WIEGAND_D1`, `gpio.NEOPOOL_TX`, `gpio.NEOPOOL_RX`, `gpio.SDM72_TX`, `gpio.SDM72_RX`, `gpio.TM1637CLK`, `gpio.TM1637DIO`, `gpio.PROJECTOR_CTRL_TX`, `gpio.PROJECTOR_CTRL_RX`, `gpio.SSD1351_DC`, `gpio.XPT2046_CS`, `gpio.CSE7761_TX`, `gpio.CSE7761_RX`, `gpio.VL53LXX_XSHUT1`, `gpio.MAX7219CLK`, `gpio.MAX7219DIN`, `gpio.MAX7219CS`, `gpio.TFMINIPLUS_TX`, `gpio.TFMINIPLUS_RX`, `gpio.ZEROCROSS`, `gpio.HALLEFFECT`, `gpio.EPD_DATA`, `gpio.INPUT`, `gpio.KEY1_PD`, `gpio.KEY1_INV_PD`, `gpio.SWT1_PD`, `gpio.I2S_OUT_DATA`, `gpio.I2S_OUT_CLK`, `gpio.I2S_OUT_SLCT`, `gpio.I2S_IN_DATA`, `gpio.I2S_IN_CLK`, `gpio.I2S_IN_SLCT`, `gpio.INTERRUPT`, `gpio.MCP2515_CS`, `gpio.HRG15_TX`, `gpio.VINDRIKTNING_RX`, `gpio.BL0939_RX`, `gpio.BL0942_RX`, `gpio.HM330X_SET`, `gpio.HEARTBEAT`, `gpio.HEARTBEAT_INV`, `gpio.SHIFT595_SRCLK`, `gpio.SHIFT595_RCLK`, `gpio.SHIFT595_OE`, `gpio.SHIFT595_SER`, `gpio.SOLAXX1_RTS`, `gpio.OPTION_E`, `gpio.SDM230_TX`, `gpio.SDM230_RX`, `gpio.ADC_MQ`, `gpio.CM11_TXD`, `gpio.CM11_RXD`, `gpio.BL6523_TX`, `gpio.BL6523_RX`, `gpio.ADE7880_IRQ`, `gpio.RESET`, `gpio.MS01`, `gpio.SDIO_CMD`, `gpio.SDIO_CLK`, `gpio.SDIO_D0`, `gpio.SDIO_D1`, `gpio.SDIO_D2`, `gpio.SDIO_D3`, `gpio.FLOWRATEMETER_SIGNAL`, `gpio.SENSOR_END`
+    `gpio.NONE`, `gpio.KEY1`, `gpio.KEY1_NP`, `gpio.KEY1_INV`, `gpio.KEY1_INV_NP`, `gpio.SWT1`, `gpio.SWT1_NP`, `gpio.REL1`, `gpio.REL1_INV`, `gpio.LED1`, `gpio.LED1_INV`, `gpio.CNTR1`, `gpio.CNTR1_NP`, `gpio.PWM1`, `gpio.PWM1_INV`, `gpio.BUZZER`, `gpio.BUZZER_INV`, `gpio.LEDLNK`, `gpio.LEDLNK_INV`, `gpio.I2C_SCL`, `gpio.I2C_SDA`, `gpio.SPI_MISO`, `gpio.SPI_MOSI`, `gpio.SPI_CLK`, `gpio.SPI_CS`, `gpio.SPI_DC`, `gpio.SSPI_MISO`, `gpio.SSPI_MOSI`, `gpio.SSPI_SCLK`, `gpio.SSPI_CS`, `gpio.SSPI_DC`, `gpio.BACKLIGHT`, `gpio.OLED_RESET`, `gpio.IRSEND`, `gpio.IRRECV`, `gpio.RFSEND`, `gpio.RFRECV`, `gpio.DHT11`, `gpio.DHT22`, `gpio.SI7021`, `gpio.DHT11_OUT`, `gpio.DSB`, `gpio.DSB_OUT`, `gpio.WS2812`, `gpio.MHZ_TXD`, `gpio.MHZ_RXD`, `gpio.PZEM0XX_TX`, `gpio.PZEM004_RX`, `gpio.PZEM016_RX`, `gpio.PZEM017_RX`, `gpio.SAIR_TX`, `gpio.SAIR_RX`, `gpio.PMS5003_TX`, `gpio.PMS5003_RX`, `gpio.SDS0X1_TX`, `gpio.SDS0X1_RX`, `gpio.SBR_TX`, `gpio.SBR_RX`, `gpio.SR04_TRIG`, `gpio.SR04_ECHO`, `gpio.SDM120_TX`, `gpio.SDM120_RX`, `gpio.SDM630_TX`, `gpio.SDM630_RX`, `gpio.TM1638CLK`, `gpio.TM1638DIO`, `gpio.TM1638STB`, `gpio.MP3_DFR562`, `gpio.HX711_SCK`, `gpio.HX711_DAT`, `gpio.TX2X_TXD_BLACK`, `gpio.TUYA_TX`, `gpio.TUYA_RX`, `gpio.MGC3130_XFER`, `gpio.MGC3130_RESET`, `gpio.RF_SENSOR`, `gpio.AZ_TXD`, `gpio.AZ_RXD`, `gpio.MAX31855CS`, `gpio.MAX31855CLK`, `gpio.MAX31855DO`, `gpio.NRG_SEL`, `gpio.NRG_SEL_INV`, `gpio.NRG_CF1`, `gpio.HLW_CF`, `gpio.HJL_CF`, `gpio.MCP39F5_TX`, `gpio.MCP39F5_RX`, `gpio.MCP39F5_RST`, `gpio.PN532_TXD`, `gpio.PN532_RXD`, `gpio.SM16716_CLK`, `gpio.SM16716_DAT`, `gpio.SM16716_SEL`, `gpio.DI`, `gpio.DCKI`, `gpio.CSE7766_TX`, `gpio.CSE7766_RX`, `gpio.ARIRFRCV`, `gpio.ARIRFSEL`, `gpio.TXD`, `gpio.RXD`, `gpio.ROT1A`, `gpio.ROT1B`, `gpio.ADC_JOY`, `gpio.SSPI_MAX31865_CS1`, `gpio.HRE_CLOCK`, `gpio.HRE_DATA`, `gpio.ADE7953_IRQ`, `gpio.SOLAXX1_TX`, `gpio.SOLAXX1_RX`, `gpio.ZIGBEE_TX`, `gpio.ZIGBEE_RX`, `gpio.RDM6300_RX`, `gpio.IBEACON_TX`, `gpio.IBEACON_RX`, `gpio.A4988_DIR`, `gpio.A4988_STP`, `gpio.A4988_ENA`, `gpio.A4988_MS1`, `gpio.OUTPUT_HI`, `gpio.OUTPUT_LO`, `gpio.DDS2382_TX`, `gpio.DDS2382_RX`, `gpio.DDSU666_TX`, `gpio.DDSU666_RX`, `gpio.SM2135_CLK`, `gpio.SM2135_DAT`, `gpio.DEEPSLEEP`, `gpio.EXS_ENABLE`, `gpio.TASMOTACLIENT_TXD`, `gpio.TASMOTACLIENT_RXD`, `gpio.TASMOTACLIENT_RST`, `gpio.TASMOTACLIENT_RST_INV`, `gpio.HPMA_RX`, `gpio.HPMA_TX`, `gpio.GPS_RX`, `gpio.GPS_TX`, `gpio.HM10_RX`, `gpio.HM10_TX`, `gpio.LE01MR_RX`, `gpio.LE01MR_TX`, `gpio.CC1101_GDO0`, `gpio.CC1101_GDO2`, `gpio.HRXL_RX`, `gpio.ELECTRIQ_MOODL_TX`, `gpio.AS3935`, `gpio.ADC_INPUT`, `gpio.ADC_TEMP`, `gpio.ADC_LIGHT`, `gpio.ADC_BUTTON`, `gpio.ADC_BUTTON_INV`, `gpio.ADC_RANGE`, `gpio.ADC_CT_POWER`, `gpio.WEBCAM_PWDN`, `gpio.WEBCAM_RESET`, `gpio.WEBCAM_XCLK`, `gpio.WEBCAM_SIOD`, `gpio.WEBCAM_SIOC`, `gpio.WEBCAM_DATA`, `gpio.WEBCAM_VSYNC`, `gpio.WEBCAM_HREF`, `gpio.WEBCAM_PCLK`, `gpio.WEBCAM_PSCLK`, `gpio.WEBCAM_HSD`, `gpio.WEBCAM_PSRCS`, `gpio.BOILER_OT_RX`, `gpio.BOILER_OT_TX`, `gpio.WINDMETER_SPEED`, `gpio.KEY1_TC`, `gpio.BL0940_RX`, `gpio.TCP_TX`, `gpio.TCP_RX`, `gpio.ETH_PHY_POWER`, `gpio.ETH_PHY_MDC`, `gpio.ETH_PHY_MDIO`, `gpio.TELEINFO_RX`, `gpio.TELEINFO_ENABLE`, `gpio.LMT01`, `gpio.IEM3000_TX`, `gpio.IEM3000_RX`, `gpio.ZIGBEE_RST`, `gpio.DYP_RX`, `gpio.MIEL_HVAC_TX`, `gpio.MIEL_HVAC_RX`, `gpio.WE517_TX`, `gpio.WE517_RX`, `gpio.AS608_TX`, `gpio.AS608_RX`, `gpio.SHELLY_DIMMER_BOOT0`, `gpio.SHELLY_DIMMER_RST_INV`, `gpio.RC522_RST`, `gpio.P9813_CLK`, `gpio.P9813_DAT`, `gpio.OPTION_A`, `gpio.FTC532`, `gpio.RC522_CS`, `gpio.NRF24_CS`, `gpio.NRF24_DC`, `gpio.ILI9341_CS`, `gpio.ILI9341_DC`, `gpio.ILI9488_CS`, `gpio.EPAPER29_CS`, `gpio.EPAPER42_CS`, `gpio.SSD1351_CS`, `gpio.RA8876_CS`, `gpio.ST7789_CS`, `gpio.ST7789_DC`, `gpio.SSD1331_CS`, `gpio.SSD1331_DC`, `gpio.SDCARD_CS`, `gpio.ROT1A_NP`, `gpio.ROT1B_NP`, `gpio.ADC_PH`, `gpio.BS814_CLK`, `gpio.BS814_DAT`, `gpio.WIEGAND_D0`, `gpio.WIEGAND_D1`, `gpio.NEOPOOL_TX`, `gpio.NEOPOOL_RX`, `gpio.SDM72_TX`, `gpio.SDM72_RX`, `gpio.TM1637CLK`, `gpio.TM1637DIO`, `gpio.PROJECTOR_CTRL_TX`, `gpio.PROJECTOR_CTRL_RX`, `gpio.SSD1351_DC`, `gpio.XPT2046_CS`, `gpio.CSE7761_TX`, `gpio.CSE7761_RX`, `gpio.VL53LXX_XSHUT1`, `gpio.MAX7219CLK`, `gpio.MAX7219DIN`, `gpio.MAX7219CS`, `gpio.TFMINIPLUS_TX`, `gpio.TFMINIPLUS_RX`, `gpio.ZEROCROSS`, `gpio.HALLEFFECT`, `gpio.EPD_DATA`, `gpio.GPIO_INPUT`, `gpio.KEY1_PD`, `gpio.KEY1_INV_PD`, `gpio.SWT1_PD`, `gpio.I2S_OUT_DATA`, `gpio.I2S_OUT_CLK`, `gpio.I2S_OUT_SLCT`, `gpio.I2S_IN_DATA`, `gpio.I2S_IN_CLK`, `gpio.I2S_IN_SLCT`, `gpio.INTERRUPT`, `gpio.MCP2515_CS`, `gpio.HRG15_TX`, `gpio.VINDRIKTNING_RX`, `gpio.BL0939_RX`, `gpio.BL0942_RX`, `gpio.HM330X_SET`, `gpio.HEARTBEAT`, `gpio.HEARTBEAT_INV`, `gpio.SHIFT595_SRCLK`, `gpio.SHIFT595_RCLK`, `gpio.SHIFT595_OE`, `gpio.SHIFT595_SER`, `gpio.SOLAXX1_RTS`, `gpio.OPTION_E`, `gpio.SDM230_TX`, `gpio.SDM230_RX`, `gpio.ADC_MQ`, `gpio.CM11_TXD`, `gpio.CM11_RXD`, `gpio.BL6523_TX`, `gpio.BL6523_RX`, `gpio.ADE7880_IRQ`, `gpio.RESET`, `gpio.MS01`, `gpio.SDIO_CMD`, `gpio.SDIO_CLK`, `gpio.SDIO_D0`, `gpio.SDIO_D1`, `gpio.SDIO_D2`, `gpio.SDIO_D3`, `gpio.FLOWRATEMETER_SIGNAL`, `gpio.SENSOR_END`
 
 An H-bridge is an electronic circuit that switches the polarity of a voltage applied to a load. These circuits are often used in robotics and other applications to allow DC motors to run forwards or backwards.
 
@@ -678,9 +681,9 @@ DAC is limited to specific GPIOs:
     ```
     The function returns the closest voltage found. In this case it's 1255 for setting to 1250.
 
-### I2S
+### I^2^S
 
-DAC can also be used via `Esp8266Audio` through the ESP32 I2S -> DAC bridge.
+DAC can also be used via `Esp8266Audio` through the ESP32 I^2^S -> DAC bridge.
 
 ??? example
     ```berry
@@ -755,19 +758,36 @@ active\_power|float|Active Power (W) for main phase
 active\_power\_phases|array of float|Active Power (W) as an array of phases
 reactive\_power|float|Reactive Power (W) for main phase
 reactive\_power\_phases|array of float|Reactive Power (W) as an array of phases
+apparent\_power|float|Apparent Power (W) for main phase
+apparent\_power\_phases|array of float|Apparent Power (W) as an array of phases
 power\_factor|float|Power Factor (no unit) for main phase
 power\_factor\_phases|array of float|Power Factor (no unit) as an array of phases
 frequency|float|Frequency (Hz) for main phase
 frequency\_phases|array of float|Frequency (Hz) as an array of phases
 export\_active|float|(kWh)
 export\_active\_phases|array of float|(kWh)
+import\_active|float|(kWh)
+import\_active\_phases|array of float|(kWh)
+energy\_active\_export|uint8|
 start\_energy|float|Total previous energy (kWh)
+start\_energy\_phases|array of float|Total previous energy (kWh) as an array of phases
 daily|float|Daily energy (kWh)
+daily\_phases|array of float|Daily energy (kWh) as an array of phases
+daily\_sum|float|
+daily\_sum\_export\_balanced|float|
+daily\_sum\_import\_balanced|float|
 total|float|Total energy (kWh)
+total\_phases|array of float|Total energy (kWh) as an array of phases
+total\_sum|float|
+yesterday\_sum|float|
 today\_delta\_kwh|uint32|(deca milli Watt hours)<br>5764 = 0.05764 kWh = 0.058 kWh
+today\_delta\_kwh\_phases|array of uint32|(deca milli Watt hours)<br>5764 = 0.05764 kWh = 0.058 kWh, as an array of phases
 today\_offset\_kwh|uint32|(deca milli Watt hours)
+today\_offset\_kwh\_phases|array of uint32|(deca milli Watt hours) as an array of phases
 today\_kwh|uint32|(deca milli Watt hours)
+today\_kwh\_phases|array of uint32|(deca milli Watt hours) as an array of phases
 period|uint32|(deca milli Watt hours)
+period\_phases|array of uint32|(deca milli Watt hours) as an array of phases
 fifth\_second|uint8|
 command\_code|uint8|
 data\_valid|uint8|`0` if data is valid for main phase
@@ -781,8 +801,9 @@ voltage\_available|bool|Enable if voltage is measured
 current\_available|bool|Enable if current is measured
 type\_dc|bool|
 power\_on|bool|
-|||**Below if for Energy Margin Detection**
+||**Below if for Energy Margin Detection**
 power\_history\_0<br>power\_history\_1<br>power\_history\_2|uint16|
+power\_history\_0\_phases<br>power\_history\_1\_phases<br>power\_history\_2\_phases|array of uint16|
 power\_steady\_counter|uint8|Allow for power on stabilization
 min\_power\_flag|bool|
 max\_power\_flag|bool|
@@ -790,11 +811,13 @@ min\_voltage\_flag|bool|
 max\_voltage\_flag|bool|
 min\_current\_flag|bool|
 max\_current\_flag|bool|
-|||**Below if for Energy Power Limit**
-mplh\_counter|uint16|
-mplw\_counter|uint16|
-mplr\_counter|uint8|
+||**Below if for Energy Power Limit**
+mpl\_hold\_counter|uint16|
+mpl\_window\_counter|uint16|
+mpl\_retry\_counter|uint8|
 max\_energy\_state|uint8|
+
+In addition to these, the array values also have simple names for the indexes above 1, like `active_power_2` and `active_power_3`
 
 ### Energy driver in Berry
 
@@ -845,7 +868,7 @@ You generally use `tasmota.wire_scan()` to find a device and the corresponding I
 Wire Function|Parameters and details
 :---|:---
 bus<a class="cmnd" id="wire_bus"></a>|`read only attribute, 1 or 2`<br>Bus number for this wire instance.
-enabled<a class="cmnd" id="wire_enabled"></a>|`() -> bool`<br>Returns `true` is the I2C bus is initialized (i.e. GPIOs are defined)
+enabled<a class="cmnd" id="wire_enabled"></a>|`() -> bool`<br>Returns `true` is the I^2^C bus is initialized (i.e. GPIOs are defined)
 scan<a class="cmnd" id="wire_scan"></a>|`() -> array of int`<br>Scan the bus and return all responding addresses. Note: addresses are displayed as decimal ints, not hex.
 scan<a class="cmnd" id="wire_scan"></a>|`() -> array of int`<br>Scan the bus and return all responding addresses. Note: addresses are displayed as decimal ints, not hex.
 detect<a class="cmnd" id="wire_detect"></a>|`(addr:int) -> bool`<br>Returns `true` if the device of address `addr` is connected to this bus.
@@ -1105,14 +1128,16 @@ Low-level functions if you want to display custom pages and content:
 
 General Function|Parameters and details
 :---|:---
-on<a class="cmnd" id="ws_on"></a>|`(prefix:string, callback:closure [, method:int]) -> nil`<br>Attaches a handler (any closure or function) to a prefix. An optional `method` argument (defaults to `webserver.HTTP_ANY` specifies the HTTP methods to be received (ANY, GET, POST, OPTIONS, POST)<BR>WARNING - this should be called only when receiving `web_add_handler` event. If called before the WebServer is set up and Wi-Fi on, it will crash. For debug purpose, it can be called later when you are sure that Wi-Fi or Ethernet is up.
+on<a class="cmnd" id="ws_on"></a>|`(prefix:string, callback:closure [, method:int]) -> nil`<br>Attaches a handler (any closure or function) to a prefix. An optional `method` argument (defaults to `webserver.HTTP_ANY`) specifies the HTTP methods to be received (ANY, GET, POST, OPTIONS, POST)<BR>WARNING - this should be called only when receiving `web_add_handler` event. If called before the WebServer is set up and Wi-Fi on, it will crash. For debug purpose, it can be called later when you are sure that Wi-Fi or Ethernet is up.
+remove_route<a class="cmnd" id="ws_remove_route"></a>|`(prefix:string [, method:int]) -> bool`<br>Remove a handler already added with `webserver.on()`. Does nothing if the handler does not exist or was already removed.
 state<a class="cmnd" id="ws_state"></a>|`() -> int`<br>Returns the internal state of Tasmota web server. Possible values are `webserver.HTTP_OFF`, `webserver.HTTP_USER`, `webserver.HTTP_ADMIN`, `webserver.HTTP_MANAGER`, `webserver.HTTP_MANAGER_RESET_ONLY`.
 content_open<a class="cmnd" id="ws_content_open"></a>|`(http_code:int, mimetype:string) -> nil`<br>Sets http code and mime type for the response
 content_start<a class="cmnd" id="ws_content_start"></a>|`(string) -> nil`<br>Start response page with title
 content_response<a class="cmnd" id="ws_content_response"></a>|`(string) -> nil`<br>Sends a response to a XMLHttpRequest
-content_send_style<a class="cmnd" id="ws_content_send_style"></a>|`() -> nil`<br>Sends the standard Tasmota style
+content_send_style<a class="cmnd" id="ws_content_send_style"></a>|`([styles -> string]) -> nil`<br>Sends the standard Tasmota style<br>Optional argument `styles` to add custom CSS styles to the `<head>` section
 content_flush<a class="cmnd" id="ws_content_flush"></a>|`() -> nil`<br>Flush the buffer and send any buffered content to the client
-content_stop<a class="cmnd" id="ws_content_stop"></a>|`() -> nil`<br>End of the response, closes the connection
+content_stop<a class="cmnd" id="ws_content_stop"></a>|`() -> nil`<br>Produce the standard Tasmota footer and closes the connection
+content_close<a class="cmnd" id="ws_content_close"></a>|`() -> nil`<br>Closes the connection without adding any more content
 redirect<a class="cmnd" id="ws_redirect"></a>|`(string) -> nil`<br>Sets location header, and http status 302
 
 Module `webserver` also defines the following constants:
@@ -1376,7 +1401,6 @@ mdns.add_service("_matterc","_udp", 5540, {"VP":"65521+32768", "SII":5000, "SAI"
 General Function|Parameters and details
 :---|:---
 start<a class="cmnd" id="mdns_start"></a>|`mdns.start([hostname: string]) -> nil`<br>Start or restart mDNS, specify a new hostname if needed or implicitly use `tasmota.hostname()` if none provided (default)
-stop<a class="cmnd" id="mdns_stop"></a>|`mdns.stop() -> nil`<br>Free all mDNS resources
 set_hostname<a class="cmnd" id="mdns_set_hostname"></a>|`mdsn.set_hostname(hostname:string) -> nil`<br>Change the hostname
 add_service<a class="cmnd" id="mdns_add_service"></a>|`mdns.add_service(service:string, proto:string, port:int, txt:map) -> nil`<br>Add a service declaration using the current hostname as instance name, and specify TXT fields as a `map`
 
@@ -1488,7 +1512,7 @@ get_log<a class="cmnd" id="tasmota_log_reader_get_log"></a>|`get_log(log_level:i
 
 ### `ULP` module
 
-The `ULP` module exposes the third computing unit of the ESP32, which is a simple finite state machine (FSM) that is designed to perform measurements using the ADC, temperature sensor and even external I2C sensors.
+The `ULP` module exposes the third computing unit of the ESP32, which is a simple finite state machine (FSM) that is designed to perform measurements using the ADC, temperature sensor and even external I^2^C sensors.
 This small ultra low power coprocessor can run in parallel to the main cores and in deep sleep mode, where it is capable to wake up the system, i.e. in reaction to sensor measurements.
 The binding to Berry consists of some lightweight wrapper functions and the communication with the main cores works by accessing the RTC_SLOW_MEM from both sides, which is the same way as in any other ESP32 ULP project.
 
@@ -2148,8 +2172,8 @@ cam_view.center()
 i = img()
 
 import cam
-cam.setup(4) # 240 x 240
-cam.get_image(i,i.RGB565)
+cam.setup(5) # 240 x 240
+cam.get_image(i,i.RGB565LE)
 
 def lv_img_dsc(image)
     var i = image.info()
@@ -2172,7 +2196,7 @@ descriptor = lv_img_dsc(i)
 cam_view.set_src(descriptor) # bind cam_view to buffer of img
 
 def video()
-    cam.get_image(i,i.RGB565) # this will just update the buffer, no reallocation
+    cam.get_image(i,i.RGB565LE) # this will just update the buffer, no reallocation
     cam_view.invalidate()
     tasmota.set_timer(20,/->video()) # aim for 50 Hz
 end
